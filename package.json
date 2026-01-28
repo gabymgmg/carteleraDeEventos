@@ -1,32 +1,16 @@
 {
-  "name": "carteleradeeventos",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "cartelera-de-eventos",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "dev": "nodemon server.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gabymgmg/carteleraDeEventos.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/gabymgmg/carteleraDeEventos/issues"
-  },
-  "homepage": "https://github.com/gabymgmg/carteleraDeEventos#readme",
-  "dependencies": {
-    "cors": "^2.8.6",
-    "dotenv": "^17.2.3",
-    "express": "^5.2.1",
-    "mongodb": "^7.0.0",
-    "mongoose": "^9.1.5"
+    "backend": "npm run dev -w backend",
+    "frontend": "npm run dev -w frontend",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\""
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "concurrently": "^9.2.1"
   }
 }

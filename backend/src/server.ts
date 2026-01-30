@@ -1,4 +1,4 @@
-import express, {Application,Request,Response} from 'express';
+import express, { Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import mongoose from 'mongoose';
@@ -7,7 +7,7 @@ import connectDB from './config/db';
 // Load environment variables
 dotenv.config();
 
-const app:Application = express();
+const app: Application = express();
 
 // Connect to DB
 connectDB();
@@ -17,7 +17,7 @@ app.use(cors());
 app.use(express.json()); // Allows us to receive JSON data
 
 // Simple Smoke Test Route
-app.get('/', (req:Request, res:Response) => {
+app.get('/', (req: Request, res: Response) => {
   res.send('Cartelera de eventos API is running...');
 });
 

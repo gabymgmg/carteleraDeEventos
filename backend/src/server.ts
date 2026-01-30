@@ -13,8 +13,11 @@ const app: Application = express();
 connectDB();
 
 // Middleware
-app.use(cors());
-app.use(express.json()); // Allows us to receive JSON data
+app.use(cors({
+  origin: 'http://localhost:5173', // Frontend URL
+  credentials: true
+}));
+app.use(express.json()); // Allows to receive JSON data
 app.use('/api/auth', authRoutes);
 
 // Simple Smoke Test Route

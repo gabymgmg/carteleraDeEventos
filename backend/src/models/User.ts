@@ -1,6 +1,5 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { kMaxLength } from 'node:buffer';
 
 export interface IUser extends Document {
   name: string;
@@ -37,6 +36,7 @@ const UserSchema: Schema = new Schema(
       type: String,
       required: true,
       minlength: 6,
+      select: false, // Do not return password field by default
     },
     // Optional fields
     description: {

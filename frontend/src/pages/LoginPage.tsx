@@ -1,38 +1,44 @@
-import React, {useState} from "react";
-import api from "../api/axios";
-import {useNavigate} from "react-router-dom";
+import React, { useState } from 'react';
+import api from '../api/axios';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../hooks/useAuth';
 
 const LoginPage = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");       
-    const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError("");
+  const navigate = useNavigate();
+  const {login} = useAuth(); // Get login function from context
 
-        try {
-            const response = await api.post("/auth/login", {email, password});      
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
 
-            // Save the token to localStorage
-            localStorage.setItem("token", response.data.token);
+    try {
+      const response = await api.post('/auth/login', { email, password });
 
-            // Redirect to the dashboard or home page
-            alert("Login successful!");
-            navigate("/");
-        } catch (err: any) {
-            setError(err.response?.data?.message || "Invalid email or password");
-        }
-    };
+      login(response.data); // Use context login function
+      alert('Login successful!');
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || 'Invalid email or password');
+      } else {
+        setError('An unexpected error occurred');
+      }
+    }
+  };
 
-return (
+  return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full space-y-8 p-10 bg-white rounded-xl shadow-lg">
-        <h2 className="text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
-        
+        <h2 className="text-center text-3xl font-extrabold text-gray-900">
+          Sign in to your account
+        </h2>
+
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
             <input

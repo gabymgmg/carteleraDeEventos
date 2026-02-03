@@ -12,6 +12,8 @@ export interface IUser extends Document {
   businessAddress?: string;
   createdAt: Date;
   comparePassword(password: string): Promise<boolean>;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
 }
 
 const UserSchema: Schema = new Schema(
@@ -56,7 +58,15 @@ const UserSchema: Schema = new Schema(
       type: String,
       trim: true,
     },
-
+    // These fields stay empty until a user requests a reset
+    resetPasswordToken: { 
+      type: String, 
+      default: undefined 
+    },
+    resetPasswordExpires: { 
+      type: Date, 
+      default: undefined 
+    },
     createdAt: {
       type: Date,
       default: Date.now,

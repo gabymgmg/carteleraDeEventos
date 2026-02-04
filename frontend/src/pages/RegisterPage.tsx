@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import api from '../api/axios';
 import { useAuth } from '../hooks/useAuth';
+import { validatePassword } from '../utils/validation';
 
 const RegisterPage = () => {
   const { login } = useAuth();
@@ -13,6 +14,7 @@ const RegisterPage = () => {
     name: '',
     email: '',
     password: '',
+    confirmPassword: '',
     businessName: '',
     businessAddress: '',
     description: '',
@@ -28,9 +30,16 @@ const RegisterPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    // Password validation
+    const validationError = validatePassword(
+      formData.password,
+      formData.confirmPassword
+    );
+    if (validationError) return setError(validationError);
 
     try {
-      const { data } = await api.post('/auth/register', formData);
+      const { confirmPassword, ...dataToSubmit } = formData;
+      const { data } = await api.post('/auth/register', dataToSubmit);
       login(data);
     } catch (err) {
       // Type guarding to satisfy the strict linter
@@ -86,6 +95,14 @@ const RegisterPage = () => {
               type="password"
               required
               placeholder="Password (min. 6 characters)"
+              className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              onChange={handleChange}
+            />
+            <input
+              name="confirmPassword"
+              type="password"
+              required
+              placeholder="Confirm Password"
               className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               onChange={handleChange}
             />

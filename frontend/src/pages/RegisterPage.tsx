@@ -18,7 +18,9 @@ const RegisterPage = () => {
     description: '',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     // This updates only the specific field that changed while keeping the others
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -29,11 +31,14 @@ const RegisterPage = () => {
 
     try {
       const { data } = await api.post('/auth/register', formData);
-      login(data); 
-      
+      login(data);
     } catch (err) {
+      // Type guarding to satisfy the strict linter
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || 'Registration failed. Please try again.');
+        setError(
+          err.response?.data?.message ||
+            'Registration failed. Please try again.'
+        );
       } else {
         setError('An unexpected error occurred.');
       }
@@ -113,9 +118,9 @@ const RegisterPage = () => {
             Register Now
           </button>
         </form>
-        
+
         <div className="text-center">
-          <button 
+          <button
             onClick={() => navigate('/login')}
             className="text-sm text-blue-600 hover:text-blue-500"
           >

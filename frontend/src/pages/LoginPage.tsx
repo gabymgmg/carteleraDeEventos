@@ -10,7 +10,7 @@ const LoginPage = () => {
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
-  const {login} = useAuth(); // Get login function from context
+  const { login } = useAuth(); // Get login function from context
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,6 +57,15 @@ const LoginPage = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+          </div>
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => navigate('/forgot-password')}
+              className="text-sm font-medium text-blue-600 hover:text-blue-500"
+            >
+              Forgot your password?
+            </button>
           </div>
 
           <button

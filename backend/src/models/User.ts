@@ -5,6 +5,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   role: 'owner' | 'admin';
+  isApproved: boolean;
   password: string;
   description?: string;
   avatarUrl?: string;
@@ -28,6 +29,10 @@ const UserSchema: Schema = new Schema(
       required: true,
       unique: true,
       trim: true,
+    },
+    isApproved: {
+      type: Boolean,
+      default: false, // New users need admin approval
     },
     role: {
       type: String,

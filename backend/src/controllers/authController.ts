@@ -28,16 +28,11 @@ export const register = async (req: Request, res: Response) => {
       businessAddress,
       description,
       role: 'owner',
+      isApproved: false, // New users need approval
     });
 
     if (user) {
-      res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        message: 'User registered successfully',
-      });
+      res.status(201).json({message: 'Registration successful. Your account is pending administrator approval.'});
     }
   } catch (error) {
     res.status(500).json({ message: 'Error registering user', error });
@@ -53,6 +48,12 @@ export const login = async (req: Request, res: Response) => {
     const user = await User.findOne({ email }).select('+password');
 
     if (user && (await user.comparePassword(password))) {
+      // Check for approval
+    if (!user.isApproved) {
+      return res.status(403).json({ 
+        message: 'Your account is pending approval.' 
+      });
+    }
       res.json({
         _id: user._id,
         name: user.name,
@@ -61,7 +62,7 @@ export const login = async (req: Request, res: Response) => {
         token: generateToken(user.id),
       });
     } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+      res.status(401).json({ message: 'Email o contraseña inválidos' });
     }
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });

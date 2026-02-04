@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import User from '../models/User';
 import generateToken from '../utils/generateToken';
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 
 // Register a new user
 export const register = async (req: Request, res: Response) => {
@@ -96,4 +97,35 @@ export const forgotPassword = async (req:Request, res:Response) => {
   } catch (error) {
     res.status(500).json({ message: 'Error processing request', error });
   }   
+};
+
+// Reset password
+export const resetPassword = async (req:Request, res:Response) => {
+  const { token } = req.params; // Comes from URL
+  const { password } = req.body; // New password from uthe form
+
+  try {
+    // Hash the received token to compare with DB
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    // Find user by token and check if token is not expired
+    const user = await User.findOne({ 
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: new Date() } // Token expiration in the future
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired token' });
+    } 
+    
+    // Update password and clear reset fields
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+
+    res.status(200).json({ message: 'Password has been reset successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error resetting password', error });
+  }
 };

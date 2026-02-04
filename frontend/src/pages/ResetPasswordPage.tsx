@@ -73,7 +73,7 @@ const ResetPasswordPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className={loading ? "bg-gray-400" : "bg-blue-600"}
+            className={loading ? 'bg-gray-400' : 'bg-blue-600'}
           >
             {loading ? 'Updating...' : 'Reset Password'}
           </button>

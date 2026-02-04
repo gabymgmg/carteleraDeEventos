@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import User from '../models/User';
 import generateToken from '../utils/generateToken';
 import crypto from 'crypto';
-import bcrypt from 'bcryptjs';
 
 // Register a new user
 export const register = async (req: Request, res: Response) => {
@@ -101,9 +100,9 @@ export const forgotPassword = async (req:Request, res:Response) => {
 
 // Reset password
 export const resetPassword = async (req:Request, res:Response) => {
-  const { token } = req.params; // Comes from URL
+  const token = req.params.token as string; // Comes from URL
   const { password } = req.body; // New password from uthe form
-
+  console.log(`Received token: ${token}`);  
   try {
     // Hash the received token to compare with DB
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');

@@ -1,6 +1,10 @@
 import express from 'express';
-import { login, register, forgotPassword, resetPassword } from '../controllers/authController';
-
+import {
+  login,
+  register,
+  forgotPassword,
+  resetPassword,
+} from '../controllers/authController';
 
 const router = express.Router();
 

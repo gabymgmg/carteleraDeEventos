@@ -64,13 +64,13 @@ const UserSchema: Schema = new Schema(
       trim: true,
     },
     // These fields stay empty until a user requests a reset
-    resetPasswordToken: { 
-      type: String, 
-      default: undefined 
+    resetPasswordToken: {
+      type: String,
+      default: undefined,
     },
-    resetPasswordExpires: { 
-      type: Date, 
-      default: undefined 
+    resetPasswordExpires: {
+      type: Date,
+      default: undefined,
     },
     createdAt: {
       type: Date,

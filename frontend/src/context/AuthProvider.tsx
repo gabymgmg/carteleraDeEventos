@@ -1,23 +1,28 @@
 import type { ReactNode } from 'react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext, type User, type LoginResponse } from './AuthContext';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Lazy initialization: Check localStorage innmediately
-  const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('user');
-    if (!saved) return null;
-    try {
-      return JSON.parse(saved);
-    } catch {
-      return null;
+  // Check localStorage on mount
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+
+    if (savedUser && token) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (err) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+      }
     }
-  });
-
-  const [loading] = useState(false);
+    setLoading(false); // Finished checking
+  }, []);
 
   const login = useCallback(
     (data: LoginResponse) => {
@@ -30,7 +35,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       };
       localStorage.setItem('user', JSON.stringify(profile));
       setUser(profile);
-      navigate('/');
+      // Redirect based on role
+      if (profile.role === 'admin') navigate('admin/dashboard');
+      else navigate('/dashboard');
     },
     [navigate]
   );
@@ -44,7 +51,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider value={{ user, login, logout, loading }}>
-      {children}
+      {!loading ? (
+        children
+      ) : (
+        <div className="h-screen flex items-center justify-center">
+          Cargando...
+        </div>
+      )}{' '}
     </AuthContext.Provider>
   );
 };

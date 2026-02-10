@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDB from './config/db';
 import authRoutes from './routes/authRoutes';
 import userRoutes from './routes/userRoutes';
+import eventRoutes from './routes/eventRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -23,6 +24,7 @@ app.use(
 app.use(express.json()); // Allows to receive JSON data
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/events', eventRoutes);
 
 // Simple Smoke Test Route
 app.get('/', (req: Request, res: Response) => {

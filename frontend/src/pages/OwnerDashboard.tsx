@@ -2,7 +2,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 const OwnerDashboard = () => {
-  const { user } = useAuth(); 
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -14,7 +14,10 @@ const OwnerDashboard = () => {
             Bienvenido, {user?.name}
           </h2>
           <p className="text-sm text-gray-500 mt-1">
-            Gestionando: <span className="font-semibold">{user?.businessName || 'Tu Negocio'}</span>
+            Gestionando:{' '}
+            <span className="font-semibold">
+              {user?.businessName || 'Tu Negocio'}
+            </span>
           </p>
         </div>
         <div className="mt-4 flex md:mt-0 md:ml-4">
@@ -30,23 +33,31 @@ const OwnerDashboard = () => {
       {/* Stats/Quick Info Grid */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-10">
         <div className="bg-white overflow-hidden shadow rounded-lg p-5">
-          <dt className="text-sm font-medium text-gray-500 truncate">Eventos Activos</dt>
+          <dt className="text-sm font-medium text-gray-500 truncate">
+            Eventos Activos
+          </dt>
           <dd className="mt-1 text-3xl font-semibold text-gray-900">0</dd>
         </div>
         <div className="bg-white overflow-hidden shadow rounded-lg p-5">
-          <dt className="text-sm font-medium text-gray-500 truncate">Vistas Totales</dt>
+          <dt className="text-sm font-medium text-gray-500 truncate">
+            Vistas Totales
+          </dt>
           <dd className="mt-1 text-3xl font-semibold text-gray-900">0</dd>
         </div>
         <div className="bg-white overflow-hidden shadow rounded-lg p-5">
-          <dt className="text-sm font-medium text-gray-500 truncate">Estado de Cuenta</dt>
-          <dd className="mt-1 text-sm font-semibold text-green-600 uppercase">Aprobada</dd>
+          <dt className="text-sm font-medium text-gray-500 truncate">
+            Estado de Cuenta
+          </dt>
+          <dd className="mt-1 text-sm font-semibold text-green-600 uppercase">
+            Aprobada
+          </dd>
         </div>
       </div>
 
       {/* Placeholder for Event List */}
       <div className="bg-white shadow overflow-hidden sm:rounded-md p-10 text-center border-2 border-dashed border-gray-300">
         <p className="text-gray-500">Aún no has publicado ningún evento.</p>
-        <button 
+        <button
           onClick={() => navigate('/create-event')}
           className="mt-4 text-blue-600 hover:underline font-medium"
         >

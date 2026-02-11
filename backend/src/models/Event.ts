@@ -20,6 +20,8 @@ const EventSchema: Schema = new Schema(
     category: { type: String, required: true, trim: true },
     imageUrl: { type: String, trim: true },
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  }, { timestamps: true });
+  },
+  { timestamps: true }
+);
 
 export default mongoose.model<Event>('Event', EventSchema);

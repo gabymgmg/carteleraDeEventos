@@ -1,5 +1,10 @@
 import express from 'express';
-import { createEvent, deleteEvent, getMyEvents, updateEvent } from '../controllers/eventController';
+import {
+  createEvent,
+  deleteEvent,
+  getMyEvents,
+  updateEvent,
+} from '../controllers/eventController';
 import { protect } from '../middleware/authMiddleware';
 
 const router = express.Router();

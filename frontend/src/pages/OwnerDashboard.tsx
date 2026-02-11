@@ -1,9 +1,30 @@
+import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';
+import type { Event } from '../types/event';
 
 const OwnerDashboard = () => {
   const { user } = useAuth();
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const { data } = await api.get('/events/my-events');
+        if (data && Array.isArray(data)) setEvents(data);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -36,7 +57,38 @@ const OwnerDashboard = () => {
           <dt className="text-sm font-medium text-gray-500 truncate">
             Eventos Activos
           </dt>
-          <dd className="mt-1 text-3xl font-semibold text-gray-900">0</dd>
+          {loading ? (
+            <p>Cargando eventos...</p>
+          ) : events.length === 0 ? (
+            <div className="text-center py-10 border-2 border-dashed border-gray-300 rounded-md">
+              <p className="text-gray-500">Aún no tienes eventos.</p>
+              <button
+                onClick={() => navigate('/create-event')}
+                className="text-blue-600"
+              >
+                Crear uno
+              </button>
+            </div>
+          ) : (
+            <div className="grid gap-4">
+              {events.map((event) => (
+                <div
+                  key={event._id}
+                  className="p-4 border rounded shadow-sm flex justify-between"
+                >
+                  <div>
+                    <h4 className="font-bold">{event.title}</h4>
+                    <p className="text-sm text-gray-600">
+                      {new Date(event.date).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <span className="text-blue-600 font-medium">
+                    {event.category}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         <div className="bg-white overflow-hidden shadow rounded-lg p-5">
           <dt className="text-sm font-medium text-gray-500 truncate">

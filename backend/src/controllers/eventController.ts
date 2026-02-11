@@ -45,11 +45,9 @@ export const deleteEvent = async (req: Request, res: Response) => {
       owner: req.user._id,
     });
     if (!event) {
-      return res
-        .status(404)
-        .json({
-          message: 'Evento no encontrado o no tienes permiso para eliminarlo',
-        });
+      return res.status(404).json({
+        message: 'Evento no encontrado o no tienes permiso para eliminarlo',
+      });
     }
     res.json({ message: 'Evento eliminado exitosamente' });
   } catch (error) {
@@ -68,11 +66,9 @@ export const updateEvent = async (req: Request, res: Response) => {
       { new: true }
     );
     if (!event) {
-      return res
-        .status(404)
-        .json({
-          message: 'Evento no encontrado o no tienes permiso para actualizarlo',
-        });
+      return res.status(404).json({
+        message: 'Evento no encontrado o no tienes permiso para actualizarlo',
+      });
     }
     res.json(event);
   } catch (error) {

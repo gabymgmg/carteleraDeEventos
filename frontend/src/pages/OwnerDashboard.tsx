@@ -26,6 +26,18 @@ const OwnerDashboard = () => {
     fetchEvents();
   }, []);
 
+  const handleDelete = async (id: string) => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar este evento?')) {
+      try {
+        await api.delete(`/events/${id}`);
+        setEvents(events.filter((event) => event._id !== id));
+      } catch (error) {
+        console.error('Error al eliminar:', error);
+        alert('No se pudo eliminar el evento');
+      }
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Header Section */}
@@ -76,6 +88,7 @@ const OwnerDashboard = () => {
                   key={event._id}
                   className="p-4 border rounded shadow-sm flex justify-between"
                 >
+                  {/* Left side: Text info */}
                   <div>
                     <h4 className="font-bold">{event.title}</h4>
                     <p className="text-sm text-gray-600">
@@ -85,6 +98,20 @@ const OwnerDashboard = () => {
                   <span className="text-blue-600 font-medium">
                     {event.category}
                   </span>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => navigate(`/edit-event/${event._id}`)}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDelete(event._id)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -104,17 +131,6 @@ const OwnerDashboard = () => {
             Aprobada
           </dd>
         </div>
-      </div>
-
-      {/* Placeholder for Event List */}
-      <div className="bg-white shadow overflow-hidden sm:rounded-md p-10 text-center border-2 border-dashed border-gray-300">
-        <p className="text-gray-500">Aún no has publicado ningún evento.</p>
-        <button
-          onClick={() => navigate('/create-event')}
-          className="mt-4 text-blue-600 hover:underline font-medium"
-        >
-          ¡Empieza publicando el primero!
-        </button>
       </div>
     </div>
   );

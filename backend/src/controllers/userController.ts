@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import User from '../models/User';
-import generateToken from '../utils/generateToken';
 
 export const approveUser = async (req: Request, res: Response) => {
   try {

@@ -7,6 +7,9 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminDashboard from './pages/AdminDashboard';
 import { useAuth } from './hooks/useAuth';
+import OwnerDashboard from './pages/OwnerDashboard';
+import CreateEvent from './pages/CreateEvent';
+import EditEvent from './pages/EditEvent';
 
 function App() {
   const { user } = useAuth();
@@ -25,7 +28,9 @@ function App() {
         />
         {/* PRIVATE ROUTES */}
         <Route element={<ProtectedRoute />}>
-          {/* <Route path="/dashboard" element={<OwnerDashboard />} /> */}
+          <Route path="/dashboard" element={<OwnerDashboard />} />
+          <Route path="/create-event" element={<CreateEvent />} />
+          <Route path="/edit-event/:id" element={<EditEvent />} />
           {user?.role === 'admin' && (
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
           )}

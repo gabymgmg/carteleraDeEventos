@@ -2,12 +2,8 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
 
-interface AuthRequest extends Request {
-  user?: any;
-}
-
 export const protect = async (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -39,7 +35,7 @@ export const protect = async (
 };
 
 // The Admin check
-export const admin = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const admin = (req: Request, res: Response, next: NextFunction) => {
   if (req.user && req.user.role === 'admin') {
     next();
   } else {

@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../api/axios';
-import axios from 'axios';
 
 interface pendingUser {
   _id: string;

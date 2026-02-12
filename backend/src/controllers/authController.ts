@@ -32,12 +32,10 @@ export const register = async (req: Request, res: Response) => {
     });
 
     if (user) {
-      res
-        .status(201)
-        .json({
-          message:
-            'Registration successful. Your account is pending administrator approval.',
-        });
+      res.status(201).json({
+        message:
+          'Registration successful. Your account is pending administrator approval.',
+      });
     }
   } catch (error) {
     res.status(500).json({ message: 'Error registering user', error });

@@ -5,6 +5,8 @@ export interface User {
   name: string;
   email: string;
   role: string;
+  businessName?: string;
+  description?: string;
 }
 
 export interface LoginResponse extends User {

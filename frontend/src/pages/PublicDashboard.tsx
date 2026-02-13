@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import type { Event } from '../types/event';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 const PublicDashboard = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -125,6 +125,12 @@ const PublicDashboard = () => {
                   Categoría: {event.category}
                 </p>
               </div>
+              <Link
+                to={`/event/${event._id}`}
+                className="mt-4 block text-center bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 rounded-md transition-colors"
+              >
+                Ver Detalles
+              </Link>
             </div>
           ))}
         </div>

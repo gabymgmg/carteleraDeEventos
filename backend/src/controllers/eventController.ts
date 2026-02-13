@@ -100,15 +100,17 @@ export const getEventById = async (req: Request, res: Response) => {
 
 export const getAllEvents = async (req: Request, res: Response) => {
   try {
-    const {category, search, location, date} = req.query;
+    const { category, search, location, date } = req.query;
     let query: any = {};
-    if(category) query.category = category;
-    if(search) query.title = { $regex: search, $options: 'i' }; // Case-insensitive search in title
-    if(location) query.location = { $regex: location, $options: 'i' }; // Case-insensitive search in location
-    if(date) query.date = { $gte: new Date(date as string) }; // Get events from a specific date onwards
-    const events = await Event.find(query).sort({ date: 1 }).populate('owner', 'name email');
+    if (category) query.category = category;
+    if (search) query.title = { $regex: search, $options: 'i' }; // Case-insensitive search in title
+    if (location) query.location = { $regex: location, $options: 'i' }; // Case-insensitive search in location
+    if (date) query.date = { $gte: new Date(date as string) }; // Get events from a specific date onwards
+    const events = await Event.find(query)
+      .sort({ date: 1 })
+      .populate('owner', 'name email');
     res.json(events);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener los eventos', error });
   }
-};  
+};

@@ -10,6 +10,8 @@ import { useAuth } from './hooks/useAuth';
 import OwnerDashboard from './pages/OwnerDashboard';
 import CreateEvent from './pages/CreateEvent';
 import EditEvent from './pages/EditEvent';
+import PublicDashboard from './pages/PublicDashboard';
+import EventDetail from './pages/EventDetail';
 
 function App() {
   const { user } = useAuth();
@@ -22,10 +24,8 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password/" element={<ForgotPasswordPage />} />
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-        <Route
-          path="/"
-          element={<div className="p-10 text-center text-2xl">Home Page</div>}
-        />
+        <Route path="/" element={<PublicDashboard />} />
+        <Route path="/event/:id" element={<EventDetail />} />
         {/* PRIVATE ROUTES */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<OwnerDashboard />} />

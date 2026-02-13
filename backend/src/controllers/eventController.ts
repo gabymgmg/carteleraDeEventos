@@ -57,7 +57,8 @@ export const deleteEvent = async (req: Request, res: Response) => {
 
 export const updateEvent = async (req: Request, res: Response) => {
   try {
-    if (!req.user) return res.status(401).json({ message: 'Usuario no autenticado' });
+    if (!req.user)
+      return res.status(401).json({ message: 'Usuario no autenticado' });
     const { title, description, date, location, category, imageUrl } = req.body;
     const event = await Event.findOneAndUpdate(
       { _id: req.params.id, owner: req.user._id },
@@ -94,5 +95,22 @@ export const getEventById = async (req: Request, res: Response) => {
     res.json(event);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener el evento', error });
+  }
+};
+
+export const getAllEvents = async (req: Request, res: Response) => {
+  try {
+    const { category, search, location, date } = req.query;
+    let query: any = {};
+    if (category) query.category = category;
+    if (search) query.title = { $regex: search, $options: 'i' }; // Case-insensitive search in title
+    if (location) query.location = { $regex: location, $options: 'i' }; // Case-insensitive search in location
+    if (date) query.date = { $gte: new Date(date as string) }; // Get events from a specific date onwards
+    const events = await Event.find(query)
+      .sort({ date: 1 })
+      .populate('owner', 'name email');
+    res.json(events);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener los eventos', error });
   }
 };

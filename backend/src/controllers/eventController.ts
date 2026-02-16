@@ -27,8 +27,7 @@ export const createEvent = async (req: Request, res: Response) => {
 
 export const getMyEvents = async (req: Request, res: Response) => {
   try {
-    if (!req.user)
-      return res.status(401).json({ message: 'Usuario no autenticado' });
+    if (!req.user) return res.status(401).json({ message: 'Usuario no autenticado' });
     const events = await Event.find({ owner: req.user._id }).sort({ date: 1 });
     res.json(events);
   } catch (error) {
@@ -57,8 +56,8 @@ export const deleteEvent = async (req: Request, res: Response) => {
 
 export const updateEvent = async (req: Request, res: Response) => {
   try {
-    if (!req.user)
-      return res.status(401).json({ message: 'Usuario no autenticado' });
+    if (!req.user) return res.status(401).json({ message: 'Usuario no autenticado' });
+    
     const { title, description, date, location, category, imageUrl } = req.body;
     const event = await Event.findOneAndUpdate(
       { _id: req.params.id, owner: req.user._id },

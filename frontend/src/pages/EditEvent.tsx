@@ -84,6 +84,12 @@ const EditEvent = () => {
       <h2 className="text-3xl font-extrabold text-gray-900 mb-6">
         Editar Evento
       </h2>
+      <button
+        onClick={() => navigate('/dashboard')}
+        className="mb-4 py-2 px-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
+      >
+        Volver al Dashboard
+      </button>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>

@@ -4,6 +4,20 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import type { Event } from '../types/event';
 
+const formatDateForInput = (dateString: string) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+
+  // This calculates the local offset and builds the YYYY-MM-DDTHH:MM string
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
+
 const OwnerDashboard = () => {
   const { user } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
@@ -52,6 +66,12 @@ const OwnerDashboard = () => {
               {user?.businessName || 'Tu Negocio'}
             </span>
           </p>
+          <button
+            onClick={() => navigate('/profile')}
+            className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+          >
+            Ver Perfil
+          </button>
         </div>
         <div className="mt-4 flex md:mt-0 md:ml-4">
           <button
@@ -92,7 +112,7 @@ const OwnerDashboard = () => {
                   <div>
                     <h4 className="font-bold">{event.title}</h4>
                     <p className="text-sm text-gray-600">
-                      {new Date(event.date).toLocaleDateString()}
+                      {formatDateForInput(event.date).replace('T', ' ')}
                     </p>
                   </div>
                   <span className="text-blue-600 font-medium">

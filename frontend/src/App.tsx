@@ -14,6 +14,7 @@ import PublicDashboard from './pages/PublicDashboard';
 import EventDetail from './pages/EventDetail';
 import EditUser from './pages/EditUserProfile';
 import UserProfile from './pages/UserProfile';
+import ChangePassword from './pages/ChangePassword';
 
 function App() {
   const { user } = useAuth();
@@ -33,6 +34,7 @@ function App() {
           <Route path="/dashboard" element={<OwnerDashboard />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/profile/edit" element={<EditUser />} />
+          <Route path="/profile/change-password" element={<ChangePassword />} />
           <Route path="/create-event" element={<CreateEvent />} />
           <Route path="/edit-event/:id" element={<EditEvent />} />
           {user?.role === 'admin' && (

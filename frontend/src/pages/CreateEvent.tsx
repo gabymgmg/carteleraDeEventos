@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import EventForm from '../components/EventForm';
-import type { Event } from '../types/event';                        
-
+import type { Event } from '../types/event';
 
 const CreateEvent = () => {
   const navigate = useNavigate();
@@ -17,18 +16,19 @@ const CreateEvent = () => {
 
     try {
       await api.post('/events', FormData);
-      navigate('/dashboard'); 
+      navigate('/dashboard');
     } catch (err) {
       console.error('Error creating event:', err);
-      setError('Hubo un error al crear el evento. Por favor, inténtalo de nuevo.');
+      setError(
+        'Hubo un error al crear el evento. Por favor, inténtalo de nuevo.'
+      );
     } finally {
       setLoading(false);
     }
   };
 
-return (
+  return (
     <div className="max-w-2xl mx-auto py-10 px-4">
-      {/* El Padre maneja el título y los errores globales */}
       <h2 className="text-3xl font-extrabold text-gray-900 mb-6 text-center">
         Publicar Nuevo Evento
       </h2>
@@ -39,9 +39,9 @@ return (
         </p>
       )}
 
-      <EventForm 
-        onSubmit={handleCreateEvent} 
-        buttonText="Crear Evento" 
+      <EventForm
+        onSubmit={handleCreateEvent}
+        buttonText="Crear Evento"
         loading={loading}
       />
     </div>

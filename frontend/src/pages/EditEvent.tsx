@@ -2,70 +2,37 @@ import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
+import type { Event } from '../types/event';
+import EventForm from '../components/EventForm';
 
-const formatDateForInput = (dateString: string) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-
-  // This calculates the local offset and builds the YYYY-MM-DDTHH:MM string
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-
-  return `${year}-${month}-${day}T${hours}:${minutes}`;
-};
 
 const EditEvent = () => {
+  const [event, setEvent] = useState<Event | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+  const [error, setError] = useState('');
   const { id } = useParams();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    date: '',
-    location: '',
-    category: 'Concierto',
-    imageUrl: '',
-  });
-
+  // Fetch event data
   useEffect(() => {
     const fetchEvent = async () => {
-      try {
-        console.log('Fetching event with ID:', id);
-        const { data } = await api.get(`/events/${id}`);
-        console.log('Datos del evento obtenidos:', data);
-        setFormData({
-          title: data.title,
-          description: data.description,
-          date: formatDateForInput(data.date),
-          location: data.location,
-          category: data.category,
-          imageUrl: data.imageUrl || '',
-        });
+      try { 
+        const {data} = await api.get(`/events/${id}`);
+        setEvent(data);
       } catch (err) {
-        setError('No se pudo cargar el evento');
+        console.error('Error fetching event:', err);
+        setError('No se pudo cargar el evento. Por favor, inténtalo de nuevo.');
       } finally {
         setLoading(false);
       }
     };
+
     fetchEvent();
   }, [id]);
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const handleEditEvent = async (formData: Event) => {
+    setUpdating(true);
     setError('');
 
     try {
@@ -74,127 +41,30 @@ const EditEvent = () => {
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al actualizar el evento');
     } finally {
-      setLoading(false);
+      setUpdating(false);
     }
   };
 
   if (loading) return <div>Cargando...</div>;
-  return (
+  if (!event && !loading) return <div className="text-center py-10">Evento no encontrado.</div>;
+ return (
     <div className="max-w-2xl mx-auto py-10 px-4">
-      <h2 className="text-3xl font-extrabold text-gray-900 mb-6">
+      <h2 className="text-3xl font-extrabold text-gray-900 mb-6 text-center">
         Editar Evento
       </h2>
-      <button
-        onClick={() => navigate('/dashboard')}
-        className="mb-4 py-2 px-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
-      >
-        Volver al Dashboard
-      </button>
+      
+      {error && (
+        <p className="text-red-500 mb-4 bg-red-50 p-2 rounded border border-red-200 text-center">
+          {error}
+        </p>
+      )}
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <label className="block text-sm font-semibold text-gray-700">
-            Título del Evento
-          </label>
-          <input
-            type="text"
-            name="title"
-            required
-            className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-            placeholder="Ej: Festival de Jazz Verano"
-            value={formData.title}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700">
-              Fecha y Hora
-            </label>
-            <input
-              type="datetime-local"
-              name="date"
-              required
-              className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-              value={formData.date}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700">
-              Categoría
-            </label>
-            <select
-              name="category"
-              className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-              value={formData.category}
-              onChange={handleChange}
-            >
-              <option value="Concierto">Concierto</option>
-              <option value="Teatro">Teatro</option>
-              <option value="Deportes">Deportes</option>
-              <option value="Feria">Feria</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700">
-            Ubicación
-          </label>
-          <input
-            type="text"
-            name="location"
-            required
-            className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-            placeholder="Calle, Ciudad, Estadio..."
-            value={formData.location}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700">
-            Descripción
-          </label>
-          <textarea
-            name="description"
-            required
-            rows={4}
-            className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-            placeholder="Cuéntanos más sobre el evento..."
-            value={formData.description}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700">
-            Imagen del Evento
-          </label>
-          <input
-            type="text"
-            name="imageUrl"
-            className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-            placeholder="URL de la imagen del evento..."
-            value={formData.imageUrl}
-            onChange={handleChange}
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className={`w-full py-3 px-4 rounded-md text-white font-bold transition-colors ${
-            loading
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700'
-          }`}
-        >
-          {loading ? 'Actualizando evento...' : 'Actualizar Evento'}
-        </button>
-      </form>
+      <EventForm
+        initialData={event || undefined} 
+        onSubmit={handleEditEvent}
+        buttonText="Guardar Cambios"
+        loading={updating}
+      />
     </div>
   );
 };

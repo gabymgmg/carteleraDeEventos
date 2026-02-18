@@ -59,6 +59,7 @@ export const updateEvent = async (req: Request, res: Response) => {
   try {
     if (!req.user)
       return res.status(401).json({ message: 'Usuario no autenticado' });
+
     const { title, description, date, location, category, imageUrl } = req.body;
     const event = await Event.findOneAndUpdate(
       { _id: req.params.id, owner: req.user._id },

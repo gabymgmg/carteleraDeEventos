@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext, type User, type LoginResponse } from './AuthContext';
+import { AuthContext, type LoginResponse } from './AuthContext';
+import type { User } from '../types/user';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         name: data.name,
         email: data.email,
         role: data.role,
+        businessName: data.businessName,
       };
       localStorage.setItem('user', JSON.stringify(profile));
       setUser(profile);
@@ -49,8 +51,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     navigate('/login');
   }, [navigate]);
 
+  const updateUser = useCallback((updatedData: Partial<User>) => {
+    setUser((prevUser) => {
+      if (!prevUser) return null;
+      const updatedUser = { ...prevUser, ...updatedData };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, updateUser }}>
       {!loading ? (
         children
       ) : (

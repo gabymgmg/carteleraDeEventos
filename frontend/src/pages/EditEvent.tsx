@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import type { Event } from '../types/event';
 import EventForm from '../components/EventForm';
 
-
 const EditEvent = () => {
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
@@ -17,8 +16,8 @@ const EditEvent = () => {
   // Fetch event data
   useEffect(() => {
     const fetchEvent = async () => {
-      try { 
-        const {data} = await api.get(`/events/${id}`);
+      try {
+        const { data } = await api.get(`/events/${id}`);
         setEvent(data);
       } catch (err) {
         console.error('Error fetching event:', err);
@@ -46,13 +45,14 @@ const EditEvent = () => {
   };
 
   if (loading) return <div>Cargando...</div>;
-  if (!event && !loading) return <div className="text-center py-10">Evento no encontrado.</div>;
- return (
+  if (!event && !loading)
+    return <div className="text-center py-10">Evento no encontrado.</div>;
+  return (
     <div className="max-w-2xl mx-auto py-10 px-4">
       <h2 className="text-3xl font-extrabold text-gray-900 mb-6 text-center">
         Editar Evento
       </h2>
-      
+
       {error && (
         <p className="text-red-500 mb-4 bg-red-50 p-2 rounded border border-red-200 text-center">
           {error}
@@ -60,7 +60,7 @@ const EditEvent = () => {
       )}
 
       <EventForm
-        initialData={event || undefined} 
+        initialData={event || undefined}
         onSubmit={handleEditEvent}
         buttonText="Guardar Cambios"
         loading={updating}

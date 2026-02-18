@@ -25,25 +25,25 @@ const EventForm = ({
     imageUrl: '',
   });
 
-useEffect(() => {
+  useEffect(() => {
     if (initialData && initialData.date) {
-        // Create the Date object
-        const dateObj = new Date(initialData.date);
-        // Extract local components
-        const year = dateObj.getFullYear();
-        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-        const day = String(dateObj.getDate()).padStart(2, '0');
-        const hours = String(dateObj.getHours()).padStart(2, '0');
-        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+      // Create the Date object
+      const dateObj = new Date(initialData.date);
+      // Extract local components
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      const hours = String(dateObj.getHours()).padStart(2, '0');
+      const minutes = String(dateObj.getMinutes()).padStart(2, '0');
 
-        // Format to ISO local: YYYY-MM-DDTHH:mm
-        const localISO = `${year}-${month}-${day}T${hours}:${minutes}`;
-        setFormData({
-            ...initialData,
-            date: localISO
-        });
+      // Format to ISO local: YYYY-MM-DDTHH:mm
+      const localISO = `${year}-${month}-${day}T${hours}:${minutes}`;
+      setFormData({
+        ...initialData,
+        date: localISO,
+      });
     }
-}, [initialData]);
+  }, [initialData]);
 
   const handleChange = (
     e: React.ChangeEvent<

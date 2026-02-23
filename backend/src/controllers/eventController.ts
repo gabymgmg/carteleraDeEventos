@@ -1,27 +1,30 @@
 import { Request, Response } from 'express';
 import Event from '../models/Event';
 
-export const createEvent = async (req: Request, res: Response) => {
+export const createEvent = async (req: any, res: Response) => {
   try {
     // Check if user exists first
     if (!req.user)
       return res.status(401).json({ message: 'Usuario no autenticado' });
     const { title, description, date, location, category, imageUrl } = req.body;
     const owner = req.user._id;
-
+    const finalImageUrl = req.file ? req.file.path : req.body.imageUrl;
     const event = new Event({
       title,
       description,
       date,
       location,
       category,
-      imageUrl,
+      imageUrl: finalImageUrl,
       owner,
     });
     const savedEvent = await event.save();
     res.status(201).json(savedEvent);
-  } catch (error) {
-    res.status(500).json({ message: 'Error al crear el evento', error });
+  } catch (error: any) {
+    res.status(500).json({
+      message: 'Error al crear el evento',
+      debug: error.message, 
+    });
   }
 };
 

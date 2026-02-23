@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import type { Event } from '../types/event';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,6 +24,9 @@ const EventForm = ({
     category: 'Concierto',
     imageUrl: '',
   });
+
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string>('');
 
   useEffect(() => {
     if (initialData && initialData.date) {
@@ -59,9 +62,17 @@ const EventForm = ({
     return formData.date.split('T')[1].substring(0, 5);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      setPreview(URL.createObjectURL(selectedFile)); // Generates local preview
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit({ ...formData, imageFile: file } as any);
   };
 
   return (
@@ -163,13 +174,22 @@ const EventForm = ({
             URL de la Imagen (Opcional)
           </label>
           <input
-            type="text"
+            type="file"
+            accept="image/*"
             name="imageUrl"
-            value={formData.imageUrl || ''}
-            onChange={handleChange}
+            //value={formData.imageUrl || ''}
+            onChange={handleFileChange}
             className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
             placeholder="https://ejemplo.com/imagen.jpg"
           />
+          {/* show the preview if exists or the actual image if editing */}
+          {(preview || formData.imageUrl) && (
+            <img
+              src={preview || formData.imageUrl}
+              alt="Preview"
+              className="mt-4 h-48 w-full object-cover rounded-md border"
+            />
+          )}
         </div>
 
         <div className="space-y-2">

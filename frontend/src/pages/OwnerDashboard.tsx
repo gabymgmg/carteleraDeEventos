@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import type { Event } from '../types/event';
+import EventCard from '../components/EventCard';
 
 const formatDateForInput = (dateString: string) => {
   if (!dateString) return '';
@@ -110,52 +111,26 @@ const OwnerDashboard = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {events.map((event) => (
-            <div
+            <EventCard
               key={event._id}
-              className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow"
-            >
-              {/* Event image */}
-              <div className="h-40 w-full relative">
-                <img
-                  src={
-                    event.imageUrl ||
-                    'https://via.placeholder.com/400x200?text=Sin+Imagen'
-                  }
-                  alt={event.title}
-                  className="w-full h-full object-cover"
-                />
-                <span className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-blue-600 text-xs font-bold px-2 py-1 rounded">
-                  {event.category}
-                </span>
-              </div>
-
-              {/* Content */}
-              <div className="p-5">
-                <h4 className="text-lg font-bold text-gray-900 truncate">
-                  {event.title}
-                </h4>
-                <div className="mt-2 text-sm text-gray-500 flex flex-col space-y-1">
-                  <span>📅 {formatDateForInput(event.date).split('T')[0]}</span>
-                  <span className="truncate">📍 {event.location}</span>
-                </div>
-
-                {/* Actions */}
-                <div className="mt-6 flex justify-between gap-3">
+              event={event}
+              actions={
+                <>
                   <button
                     onClick={() => navigate(`/edit-event/${event._id}`)}
-                    className="flex-1 px-4 py-2 bg-blue-50 text-blue-600 text-sm font-semibold rounded-lg hover:bg-blue-100 transition-colors"
+                    className="flex-1 px-3 py-2 bg-blue-50 text-blue-600 text-xs font-bold rounded-md hover:bg-blue-100 transition-colors"
                   >
                     Editar
                   </button>
                   <button
-                    onClick={() => event._id && handleDelete(event._id)}
-                    className="flex-1 px-4 py-2 bg-red-50 text-red-600 text-sm font-semibold rounded-lg hover:bg-red-100 transition-colors"
+                    onClick={() => handleDelete(event._id!)}
+                    className="flex-1 px-3 py-2 bg-red-50 text-red-600 text-xs font-bold rounded-md hover:bg-red-100 transition-colors"
                   >
                     Eliminar
                   </button>
-                </div>
-              </div>
-            </div>
+                </>
+              }
+            />
           ))}
         </div>
       )}

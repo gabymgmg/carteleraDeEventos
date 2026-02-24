@@ -63,7 +63,6 @@ export const deleteEvent = async (req: Request, res: Response) => {
       const fileName = parts[parts.length - 1].split('.')[0];
       const publicId = `events_app/${fileName}`;
       const result = await cloudinary.uploader.destroy(publicId);
-      console.log('Resultado de eliminación en Cloudinary:', result);
     }
     await Event.findByIdAndDelete(req.params.id);
     res.json({ message: 'Evento eliminado exitosamente' });

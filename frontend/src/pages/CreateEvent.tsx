@@ -10,18 +10,30 @@ const CreateEvent = () => {
   const [error, setError] = useState('');
 
   // Child will communicate trhough this function
-  const handleCreateEvent = async (FormData: Event) => {
+  const handleCreateEvent = async (data: Event) => {
     setLoading(true);
-    setError('');
+    const formDataToSend = new FormData();
+
+    // Add content
+    formDataToSend.append('title', data.title);
+    formDataToSend.append('description', data.description);
+    formDataToSend.append('date', data.date);
+    formDataToSend.append('location', data.location);
+    formDataToSend.append('category', data.category || 'Concierto');
+    // 'image should match with name configured in uplpoadCloud.single
+    if (data.imageFile) {
+      formDataToSend.append('image', data.imageFile);
+    }
 
     try {
-      await api.post('/events', FormData);
+      await api.post('/events', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       navigate('/dashboard');
     } catch (err) {
-      console.error('Error creating event:', err);
-      setError(
-        'Hubo un error al crear el evento. Por favor, inténtalo de nuevo.'
-      );
+      setError('Error al crear el evento');
     } finally {
       setLoading(false);
     }

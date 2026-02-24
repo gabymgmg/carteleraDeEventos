@@ -1,14 +1,18 @@
 import { Request, Response } from 'express';
 import Event from '../models/Event';
+import { v2 as cloudinary } from 'cloudinary';
 
-export const createEvent = async (req: any, res: Response) => {
+export const createEvent = async (req: Request, res: Response) => {
   try {
     // Check if user exists first
     if (!req.user)
       return res.status(401).json({ message: 'Usuario no autenticado' });
-    const { title, description, date, location, category, imageUrl } = req.body;
+    const { title, description, date, location, category } = req.body;
     const owner = req.user._id;
-    const finalImageUrl = req.file ? req.file.path : req.body.imageUrl;
+    const finalImageUrl = req.file
+      ? req.file.path
+      : req.body.imageUrl ||
+        'https://via.placeholder.com/400x200?text=No+Image';
     const event = new Event({
       title,
       description,
@@ -23,7 +27,7 @@ export const createEvent = async (req: any, res: Response) => {
   } catch (error: any) {
     res.status(500).json({
       message: 'Error al crear el evento',
-      debug: error.message, 
+      debug: error.message,
     });
   }
 };
@@ -43,8 +47,10 @@ export const deleteEvent = async (req: Request, res: Response) => {
   try {
     if (!req.user)
       return res.status(401).json({ message: 'Usuario no autenticado' });
-    const event = await Event.findOneAndDelete({
-      _id: req.params.id,
+    const id = req.params.id;
+
+    const event = await Event.findOne({
+      _id: id,
       owner: req.user._id,
     });
     if (!event) {
@@ -52,6 +58,14 @@ export const deleteEvent = async (req: Request, res: Response) => {
         message: 'Evento no encontrado o no tienes permiso para eliminarlo',
       });
     }
+    if (event.imageUrl && !event.imageUrl.includes('placeholder.com')) {
+      const parts = event.imageUrl.split('/');
+      const fileName = parts[parts.length - 1].split('.')[0];
+      const publicId = `events_app/${fileName}`;
+      const result = await cloudinary.uploader.destroy(publicId);
+      console.log('Resultado de eliminación en Cloudinary:', result);
+    }
+    await Event.findByIdAndDelete(req.params.id);
     res.json({ message: 'Evento eliminado exitosamente' });
   } catch (error) {
     res.status(500).json({ message: 'Error al eliminar el evento', error });
@@ -62,8 +76,26 @@ export const updateEvent = async (req: Request, res: Response) => {
   try {
     if (!req.user)
       return res.status(401).json({ message: 'Usuario no autenticado' });
+    const { id } = req.params;
+    // Searching current event
+    const currentEvent = await Event.findById(id);
+    if (!currentEvent)
+      return res.status(404).json({ message: 'Evento no encontrado' });
 
-    const { title, description, date, location, category, imageUrl } = req.body;
+    const { title, description, date, location, category } = req.body;
+    let finalImageUrl = currentEvent.imageUrl;
+    if (req.file) {
+      if (currentEvent.imageUrl) {
+        // If an image exist, we erase it from cloudinary
+        const parts = currentEvent.imageUrl.split('/');
+        const fileNameWithExtension = parts[parts.length - 1]; // "imagen.jpg"
+        const publicId = `events_app/${fileNameWithExtension.split('.')[0]}`;
+        await cloudinary.uploader.destroy(publicId);
+      }
+
+      finalImageUrl = req.file.path; // Update with new image URL
+    }
+    // Update event with new data
     const event = await Event.findOneAndUpdate(
       { _id: req.params.id, owner: req.user._id },
       {
@@ -72,15 +104,10 @@ export const updateEvent = async (req: Request, res: Response) => {
         date: new Date(date),
         location,
         category,
-        imageUrl,
+        imageUrl: finalImageUrl,
       },
       { new: true }
     );
-    if (!event) {
-      return res.status(404).json({
-        message: 'Evento no encontrado o no tienes permiso para actualizarlo',
-      });
-    }
     res.json(event);
   } catch (error) {
     res.status(500).json({ message: 'Error al actualizar el evento', error });

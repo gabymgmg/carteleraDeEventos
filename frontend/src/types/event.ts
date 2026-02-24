@@ -8,4 +8,5 @@ export interface Event {
   imageUrl?: string;
   owner?: string | { _id: string; name: string; email: string };
   createdAt?: string;
+  imageFile?: File | null;
 }

@@ -1,6 +1,7 @@
 import { use, useEffect, useState } from 'react';
 import type { Event } from '../types/event';
 import { useNavigate } from 'react-router-dom';
+import { formatDateForInput } from '../utils/dateFormatter';
 
 interface EventFormProps {
   initialData?: Event;
@@ -29,24 +30,19 @@ const EventForm = ({
   const [preview, setPreview] = useState<string>('');
 
   useEffect(() => {
-    if (initialData && initialData.date) {
-      // Create the Date object
-      const dateObj = new Date(initialData.date);
-      // Extract local components
-      const year = dateObj.getFullYear();
-      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-      const day = String(dateObj.getDate()).padStart(2, '0');
-      const hours = String(dateObj.getHours()).padStart(2, '0');
-      const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-
-      // Format to ISO local: YYYY-MM-DDTHH:mm
-      const localISO = `${year}-${month}-${day}T${hours}:${minutes}`;
+    if (initialData) {
+      // Convert date from DB to local ISO format for input
       setFormData({
         ...initialData,
-        date: localISO,
+        date: initialData.date ? formatDateForInput(initialData.date) : '',
       });
     }
   }, [initialData]);
+
+  // Helper functions to split date and time for the form inputs
+  const getDatePart = () => formData.date.split('T')[0] || '';
+  const getTimePart = () =>
+    formData.date.split('T')[1]?.substring(0, 5) || '12:00';
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -54,12 +50,6 @@ const EventForm = ({
     >
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-  // Helper functions to split date and time for the form inputs
-  const getDatePart = () => (formData.date ? formData.date.split('T')[0] : '');
-  const getTimePart = () => {
-    if (!formData.date || !formData.date.includes('T')) return '';
-    return formData.date.split('T')[1].substring(0, 5);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,15 +100,13 @@ const EventForm = ({
             <label className="block font-medium text-gray-700">Fecha</label>
             <input
               type="date"
-              name="date"
               value={getDatePart()}
-              onChange={(e) => {
-                const time = getTimePart() || '12:00'; // Hora por defecto si no hay
+              onChange={(e) =>
                 setFormData({
                   ...formData,
-                  date: `${e.target.value}T${time}:00`,
-                });
-              }}
+                  date: `${e.target.value}T${getTimePart()}`,
+                })
+              }
               className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -128,14 +116,12 @@ const EventForm = ({
             <input
               type="time"
               value={getTimePart()}
-              onChange={(e) => {
-                const date =
-                  getDatePart() || new Date().toISOString().split('T')[0];
+              onChange={(e) =>
                 setFormData({
                   ...formData,
-                  date: `${date}T${e.target.value}:00`,
-                });
-              }}
+                  date: `${getDatePart()}T${e.target.value}`,
+                })
+              }
               className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
               required
             />

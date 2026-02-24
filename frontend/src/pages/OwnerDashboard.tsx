@@ -5,20 +5,6 @@ import api from '../api/axios';
 import type { Event } from '../types/event';
 import EventCard from '../components/EventCard';
 
-const formatDateForInput = (dateString: string) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-
-  // This calculates the local offset and builds the YYYY-MM-DDTHH:MM string
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-
-  return `${year}-${month}-${day}T${hours}:${minutes}`;
-};
-
 const OwnerDashboard = () => {
   const { user } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);

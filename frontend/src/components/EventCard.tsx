@@ -1,4 +1,5 @@
 import type { Event } from '../types/event';
+import { formatDateDisplay } from '../utils/dateFormatter';
 
 interface EventCardProps {
   event: Event;
@@ -39,7 +40,7 @@ const EventCard = ({ event, actions, variant = 'default' }: EventCardProps) => {
         <div className="mt-2 space-y-1 flex-grow">
           <p className="text-gray-500 text-xs flex items-center">
             <span className="mr-1">📅</span>
-            {new Date(event.date).toLocaleDateString()}
+            {formatDateDisplay(event.date)}
           </p>
           <p className="text-gray-500 text-xs flex items-center truncate">
             <span className="mr-1">📍</span>

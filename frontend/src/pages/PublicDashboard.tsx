@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import type { Event } from '../types/event';
 import { Link, useSearchParams } from 'react-router-dom';
+import EventCard from '../components/EventCard';
 
 const PublicDashboard = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -16,12 +17,15 @@ const PublicDashboard = () => {
 
   useEffect(() => {
     const fetchEvents = async () => {
+      setLoading(true);
       try {
         const { data } = await api.get(`/events?${searchParams.toString()}`);
         setEvents(data);
       } catch (error) {
         console.error('Error fetching events:', error);
         setEvents([]);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -96,42 +100,30 @@ const PublicDashboard = () => {
         )}
       </div>
 
-      {events.length === 0 ? (
-        <p className="text-gray-500">
-          No hay eventos disponibles en este momento.
-        </p>
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      ) : events.length === 0 ? (
+        <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed">
+          <p className="text-gray-500 text-lg">No encontramos eventos que coincidan con tu búsqueda.</p>
+          <button onClick={() => setSearchParams({})} className="mt-4 text-blue-600 font-bold">Ver todos los eventos</button>
+        </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {events.map((event) => (
-            <div
+            <EventCard
               key={event._id}
-              className="bg-white shadow rounded-lg overflow-hidden"
-            >
-              {event.imageUrl && (
-                <img
-                  src={event.imageUrl}
-                  alt={event.title}
-                  className="w-full h-48 object-cover"
-                />
-              )}
-              <div className="p-4">
-                <h2 className="text-xl font-semibold">{event.title}</h2>
-                <p className="text-gray-600 mt-2">{event.description}</p>
-                <p className="text-gray-500 mt-4 text-sm">
-                  {new Date(event.date).toLocaleDateString()} - 📍
-                  {event.location}
-                </p>
-                <p className="text-gray-500 text-sm mt-1">
-                  Categoría: {event.category}
-                </p>
-              </div>
-              <Link
-                to={`/event/${event._id}`}
-                className="mt-4 block text-center bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 rounded-md transition-colors"
-              >
-                Ver Detalles
-              </Link>
-            </div>
+              event={event}
+              actions={
+                <Link
+                  to={`/event/${event._id}`}
+                  className="flex-1 text-center bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Ver Detalles
+                </Link>
+              }
+            />
           ))}
         </div>
       )}

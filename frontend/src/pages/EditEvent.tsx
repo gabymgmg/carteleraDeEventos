@@ -30,12 +30,29 @@ const EditEvent = () => {
     fetchEvent();
   }, [id]);
 
-  const handleEditEvent = async (formData: Event) => {
+  const handleEditEvent = async (data: Event) => {
     setUpdating(true);
     setError('');
 
+    // create the FormData to send
+    const formDataToSend = new FormData();
+    formDataToSend.append('title', data.title);
+    formDataToSend.append('description', data.description);
+    formDataToSend.append('date', data.date);
+    formDataToSend.append('location', data.location);
+    formDataToSend.append('category', data.category || 'Concierto');
+    // Image
+    if (data.imageFile) {
+      formDataToSend.append('image', data.imageFile);
+    } else {
+      formDataToSend.append('imageUrl', data.imageUrl || ''); // Send existing URL if no new file
+    }
     try {
-      await api.put(`/events/${id}`, formData);
+      await api.put(`/events/${id}`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al actualizar el evento');

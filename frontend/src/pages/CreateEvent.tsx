@@ -10,7 +10,7 @@ const CreateEvent = () => {
   const [error, setError] = useState('');
 
   // Child will communicate trhough this function
-  const handleCreateEvent = async (data: any) => {
+  const handleCreateEvent = async (data: Event) => {
     setLoading(true);
     const formDataToSend = new FormData();
 
@@ -19,7 +19,7 @@ const CreateEvent = () => {
     formDataToSend.append('description', data.description);
     formDataToSend.append('date', data.date);
     formDataToSend.append('location', data.location);
-    formDataToSend.append('category', data.category);
+    formDataToSend.append('category', data.category || 'Concierto');
     // 'image should match with name configured in uplpoadCloud.single
     if (data.imageFile) {
       formDataToSend.append('image', data.imageFile);

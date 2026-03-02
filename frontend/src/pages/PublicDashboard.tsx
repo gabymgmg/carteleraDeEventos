@@ -106,8 +106,15 @@ const PublicDashboard = () => {
         </div>
       ) : events.length === 0 ? (
         <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed">
-          <p className="text-gray-500 text-lg">No encontramos eventos que coincidan con tu búsqueda.</p>
-          <button onClick={() => setSearchParams({})} className="mt-4 text-blue-600 font-bold">Ver todos los eventos</button>
+          <p className="text-gray-500 text-lg">
+            No encontramos eventos que coincidan con tu búsqueda.
+          </p>
+          <button
+            onClick={() => setSearchParams({})}
+            className="mt-4 text-blue-600 font-bold"
+          >
+            Ver todos los eventos
+          </button>
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

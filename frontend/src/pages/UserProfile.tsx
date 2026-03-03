@@ -55,7 +55,7 @@ const UserProfile = () => {
           )}
           <button
             onClick={() => navigate('/profile/change-password')}
-            className="mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700"
+            className="mt-4 inline-flex items-center px-4 mr-2 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700"
           >
             Cambiar Contraseña
           </button>

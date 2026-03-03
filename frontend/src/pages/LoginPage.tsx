@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
 import AuthLayout from '../components/AuthLayout';
+import Input from '../components/Input';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -38,30 +39,24 @@ const LoginPage = () => {
       {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
       <form className="space-y-5" onSubmit={handleSubmit}>
-        <div className="space-y-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Email
-          </label>
-          <input
-            type="email"
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Contraseña
-          </label>
-          <input
-            type="password"
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+        <Input
+          label="Email"
+          type="email"
+          required
+          name="email"
+          placeholder="Email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <Input
+          label="Password"
+          type="password"
+          required
+          name="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
         <div className="flex justify-start">
           <button
             type="button"

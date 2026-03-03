@@ -67,79 +67,57 @@ const EditUser = () => {
     <div className="max-w-2xl mx-auto px-4 py-10">
       <h1 className="text-2xl font-bold mb-6">Editar Perfil</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Nombre
-          </label>
-          <Input
-            label="Nombre"
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-          />
+        <Input
+          label="Nombren del Organizador"
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+        />
+        <Input
+          label="Email"
+          type="email"
+          name="email"
+          value={formData.email}
+          readOnly
+          disabled
+        />
+        <Input
+          label="Nombre del Negocio"
+          type="text"
+          name="businessName"
+          value={formData.businessName}
+          onChange={handleChange}
+        />
+        <Input
+          label="Dirección del Negocio"
+          type="text"
+          name="businessAddress"
+          value={formData.businessAddress}
+          onChange={handleChange}
+        />
+        <Input
+          label="Descripción"
+          isTextArea
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+        />
+        <div className="flex items-center gap-4 pt-2">
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Guardar Cambios
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/profile')}
+            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 font-medium"
+          >
+            Cancelar
+          </button>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-500">
-            Email
-          </label>
-          <Input
-            label="Email"
-            type="email"
-            name="email"
-            value={formData.email}
-            readOnly
-            disabled
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Nombre del Negocio
-          </label>
-          <Input
-            label="Nombre del Negocio"
-            type="text"
-            name="businessName"
-            value={formData.businessName}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Dirección del Negocio
-          </label>
-          <Input
-            type="text"
-            name="businessAddress"
-            value={formData.businessAddress}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Descripción
-          </label>
-          <Input
-            label="Descripción"
-            isTextArea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-          />
-        </div>
-        <button
-          type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-        >
-          Guardar Cambios
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate('/profile')}
-          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 font-medium"
-        >
-          Cancelar
-        </button>
       </form>
     </div>
   );

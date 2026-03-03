@@ -97,7 +97,7 @@ const ChangePassword = () => {
 
           <Button
             type="button"
-            variant="primary"
+            variant="secondary"
             onClick={() => navigate('/profile')}
           >
             Cancelar

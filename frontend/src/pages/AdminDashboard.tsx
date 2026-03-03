@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
+import Button from '../components/Buttons';
 
 interface pendingUser {
   _id: string;
@@ -77,12 +78,12 @@ const AdminDashboard = () => {
                     {user.email}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button
+                    <Button
                       onClick={() => handleApprove(user._id)}
-                      className="bg-green-600 text-white px-4 py-1 rounded text-sm hover:bg-green-700"
+                      variant="success"
                     >
                       Aprobar
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}

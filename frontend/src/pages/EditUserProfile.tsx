@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import Input from '../components/Input';
 
 const EditUser = () => {
   const navigate = useNavigate();
@@ -70,60 +71,60 @@ const EditUser = () => {
           <label className="block text-sm font-medium text-gray-700">
             Nombre
           </label>
-          <input
+          <Input
+            label="Nombre"
             type="text"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-500">
             Email
           </label>
-          <input
+          <Input
+            label="Email"
             type="email"
             name="email"
             value={formData.email}
             readOnly
             disabled
-            className="mt-1 block w-full border border-gray-200 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed p-2 shadow-inner"
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Nombre del Negocio
           </label>
-          <input
+          <Input
+            label="Nombre del Negocio"
             type="text"
             name="businessName"
             value={formData.businessName}
             onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Dirección del Negocio
           </label>
-          <input
+          <Input
             type="text"
             name="businessAddress"
             value={formData.businessAddress}
             onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Descripción
           </label>
-          <textarea
+          <Input
+            label="Descripción"
+            isTextArea
             name="description"
             value={formData.description}
             onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
         <button

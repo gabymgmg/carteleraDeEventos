@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import axios from 'axios';
 import { validatePassword } from '../utils/validation';
+import AuthLayout from '../components/AuthLayout';
+import Input from '../components/Input';
 
 const ResetPasswordPage = () => {
   const { token } = useParams<{ token: string }>();
@@ -37,49 +39,45 @@ const ResetPasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full p-10 bg-white rounded-xl shadow-lg">
-        <h2 className="text-2xl font-bold text-center">Set New Password</h2>
+    <AuthLayout title="Reset Password" subtitle="Configura tu nueva contraseña">
+      {message && (
+        <p className="text-green-600 text-center mt-4 bg-green-50 p-2 rounded">
+          {message}
+        </p>
+      )}
+      {error && (
+        <p className="text-red-600 text-center mt-4 bg-red-50 p-2 rounded">
+          {error}
+        </p>
+      )}
 
-        {message && (
-          <p className="text-green-600 text-center mt-4 bg-green-50 p-2 rounded">
-            {message}
-          </p>
-        )}
-        {error && (
-          <p className="text-red-600 text-center mt-4 bg-red-50 p-2 rounded">
-            {error}
-          </p>
-        )}
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        <Input
+          label="Nueva Contraseña"
+          type="password"
+          placeholder="Enter new password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Input
+          label="Confirmar Nueva Contraseña"
+          type="password"
+          placeholder="Confirmar nueva contraseña"
+          required
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          <input
-            type="password"
-            placeholder="Enter new password"
-            className="w-full p-2 border rounded"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Confirm new password"
-            className="w-full p-2 border rounded"
-            required
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-
-          <button
-            type="submit"
-            disabled={loading}
-            className={loading ? 'bg-gray-400' : 'bg-blue-600'}
-          >
-            {loading ? 'Updating...' : 'Reset Password'}
-          </button>
-        </form>
-      </div>
-    </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all active:scale-95 disabled:bg-blue-300"
+        >
+          {loading ? 'Updating...' : 'Reset Password'}
+        </button>
+      </form>
+    </AuthLayout>
   );
 };
 

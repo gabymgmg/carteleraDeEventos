@@ -47,13 +47,20 @@ const OwnerDashboard = () => {
           <h2 className="text-3xl font-bold text-gray-900">
             Bienvenido, {user?.name}
           </h2>
-          <p className="text-gray-500">
+          <h3 className="text-gray-600 pb-1 py-5 mb-4">
             Gestionando: {user?.businessName || 'Tu Negocio'}
-          </p>
+          </h3>
+          <button
+            onClick={() => navigate('/profile')}
+            className="mt-4 md:mt-0 inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-all"
+          >
+            Mi Perfil
+          </button>
         </div>
+
         <button
           onClick={() => navigate('/create-event')}
-          className="mt-4 md:mt-0 inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-all"
+          className="mt-4 md:mt-0 inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-all hover:cursor-pointer"
         >
           + Crear Nuevo Evento
         </button>

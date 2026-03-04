@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import api from '../api/axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
 import AuthLayout from '../components/AuthLayout';
 import Input from '../components/Input';
+import Button from '../components/Buttons';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -21,13 +22,14 @@ const LoginPage = () => {
 
     try {
       const response = await api.post('/auth/login', { email, password });
-
-      login(response.data); // Use context login function
+      login(response.data);
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || 'Invalid email or password');
+        setError(
+          err.response?.data?.message || 'Email o contraseña incorrectos'
+        );
       } else {
-        setError('An unexpected error occurred');
+        setError('Ocurrió un error inesperado');
       }
     } finally {
       setLoading(false);
@@ -35,8 +37,14 @@ const LoginPage = () => {
   };
 
   return (
-    <AuthLayout title="Login" subtitle="Para Organizadores de Eventos">
-      {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+    <AuthLayout title="Iniciar Sesión" subtitle="Panel de Organizadores">
+      {error && (
+        <div className="bg-red-50 border-l-4 border-red-500 p-3 mb-4">
+          <p className="text-red-700 text-sm text-center font-medium">
+            {error}
+          </p>
+        </div>
+      )}
 
       <form className="space-y-5" onSubmit={handleSubmit}>
         <Input
@@ -44,48 +52,45 @@ const LoginPage = () => {
           type="email"
           required
           name="email"
-          placeholder="Email address"
+          placeholder="correo@ejemplo.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <Input
-          label="Password"
+          label="Contraseña"
           type="password"
           required
           name="password"
-          placeholder="Password"
+          placeholder="••••••••"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <div className="flex justify-start">
-          <button
-            type="button"
-            onClick={() => navigate('/forgot-password')}
-            className="text-sm font-medium text-blue-600 hover:underline"
+
+        <div className="flex justify-end">
+          <Link
+            to="/forgot-password"
+            className="text-xs text-blue-600 hover:underline font-medium"
           >
-            Olvidaste tu contraseña?
-          </button>
+            ¿Olvidaste tu contraseña?
+          </Link>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none disabled:bg-blue-300 transition-colors"
-        >
-          {loading ? 'Iniciando sesión...' : 'Sign in'}
-        </button>
+        <Button type="submit" isLoading={loading} className="w-full">
+          Ingresar
+        </Button>
       </form>
-      <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-        <p className="text-sm text-gray-600">
-          ¿Quieres publicar tus eventos?{' '}
-          <button
-            onClick={() => navigate('/register')}
-            className="text-blue-600 hover:text-blue-700 font-bold"
-          >
-            Solicita una cuenta
-          </button>
-        </p>
-      </div>
+
+          <div className="text-center mt-6">
+            <p className="text-sm text-gray-600">
+              ¿No tienes una cuenta?{' '}
+              <Link
+                to="/register"
+                className="text-blue-600 hover:text-blue-700 font-bold transition-colors"
+              >
+                Regístrate aquí
+              </Link>
+            </p>
+          </div>
     </AuthLayout>
   );
 };

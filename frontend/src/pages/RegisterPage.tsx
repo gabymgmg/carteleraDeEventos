@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import api from '../api/axios';
 import { validatePassword } from '../utils/validation';
 import AuthLayout from '../components/AuthLayout';
 import Input from '../components/Input';
+import Button from '../components/Buttons';
 
 const RegisterPage = () => {
-  const navigate = useNavigate();
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -72,12 +72,12 @@ const RegisterPage = () => {
     }
   };
 
-  return (
+return (
     <AuthLayout title="Registro" subtitle="Para Organizadores de Eventos">
       {message ? (
-        <div className="text-center space-y-6 py-4">
+        <div className="text-center space-y-6 py-8">
           <div className="flex justify-center">
-            <div className="bg-green-100 p-3 rounded-full">
+            <div className="bg-green-100 p-4 rounded-full">
               <svg
                 className="h-12 w-12 text-green-600"
                 fill="none"
@@ -93,22 +93,24 @@ const RegisterPage = () => {
               </svg>
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">
-            Aplicacion Recibida!
-          </h2>
-          <p className="text-gray-600 leading-relaxed">{message}</p>
-          <button
-            onClick={() => navigate('/')}
-            className="w-full bg-blue-600 text-white py-2 rounded-md font-medium hover:bg-blue-700 transition-colors"
-          >
-            Cartelera de Eventos
-          </button>
+          <div className="space-y-2">
+            <h2 className="text-3xl font-bold text-gray-900">
+              ¡Aplicación Recibida!
+            </h2>
+            <p className="text-gray-600 leading-relaxed px-4">
+              {message}
+            </p>
+          </div>
+          <div className="pt-4">
+            <Button to="/" variant="primary" className="w-full">
+              Volver a la Cartelera
+            </Button>
+          </div>
         </div>
       ) : (
-        /* FORM VIEW */
         <>
           {error && (
-            <div className="mt-4 bg-red-50 border-l-4 border-red-400 p-4 text-red-700 text-sm">
+            <div className="mt-4 bg-red-50 border-l-4 border-red-500 p-4 text-red-700 text-sm">
               {error}
             </div>
           )}
@@ -153,9 +155,10 @@ const RegisterPage = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
             />
-            <div className="pt-4 border-t border-gray-200">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                Business Profile
+
+            <div className="pt-6 border-t border-gray-200 space-y-4">
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-left">
+                Perfil del Negocio
               </p>
               <Input
                 label="Nombre del Negocio"
@@ -167,43 +170,45 @@ const RegisterPage = () => {
                 onChange={handleChange}
               />
               <Input
-                label="Dirección del Negocio"
+                label="Dirección"
                 name="businessAddress"
                 type="text"
                 required
-                placeholder="Calle Altura 123, Cuidad"
+                placeholder="Calle Altura 123, Ciudad"
                 value={formData.businessAddress}
                 onChange={handleChange}
               />
-
               <Input
                 label="Descripción"
                 isTextArea={true}
                 name="description"
-                placeholder="Que tipo de eventos organizas?"
+                placeholder="¿Qué tipo de eventos organizas?"
                 value={formData.description}
-                className="appearance-none rounded-md block w-full px-3 py-2 border border-gray-300 sm:text-sm"
                 onChange={handleChange}
                 rows={3}
               />
             </div>
 
-            <button
+            <Button
               type="submit"
-              disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none disabled:bg-blue-300 transition-colors"
+              variant="primary"
+              isLoading={loading}
+              className="w-full mt-6"
             >
-              {loading ? 'Submitting Application...' : 'Apply for Account'}
-            </button>
+              Solicitar Registro
+            </Button>
           </form>
 
-          <div className="text-center mt-4">
-            <button
-              onClick={() => navigate('/login')}
-              className="text-sm text-blue-600 hover:text-blue-500"
-            >
-              Ya tienes una cuenta? Inicia Sesión
-            </button>
+          <div className="text-center mt-8">
+            <p className="text-sm text-gray-600">
+              ¿Ya tienes una cuenta?{' '}
+              <Link
+                to="/login"
+                className="text-blue-600 hover:text-blue-700 font-bold transition-colors"
+              >
+                Inicia Sesión
+              </Link>
+            </p>
           </div>
         </>
       )}

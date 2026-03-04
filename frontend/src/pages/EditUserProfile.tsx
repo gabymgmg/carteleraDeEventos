@@ -3,6 +3,7 @@ import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import Input from '../components/Input';
+import Button from '../components/Buttons';
 
 const EditUser = () => {
   const navigate = useNavigate();
@@ -104,19 +105,16 @@ const EditUser = () => {
           onChange={handleChange}
         />
         <div className="flex items-center gap-4 pt-2">
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
+          <Button type="submit" isLoading={loading}>
             Guardar Cambios
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={() => navigate('/profile')}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 font-medium"
+            variant="secondary"
           >
             Cancelar
-          </button>
+          </Button>
         </div>
       </form>
     </div>

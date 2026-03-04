@@ -3,6 +3,8 @@ import api from '../api/axios';
 import type { Event } from '../types/event';
 import { Link, useSearchParams } from 'react-router-dom';
 import EventCard from '../components/EventCard';
+import Input from '../components/Input';
+import Button from '../components/Buttons';
 
 const PublicDashboard = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -47,57 +49,53 @@ const PublicDashboard = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <h1 className="text-3xl font-bold mb-6">Eventos Disponibles</h1>
-      <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+      {/* Filtros de Categoría (Pills) */}
+      <div className="flex gap-3 mb-10 overflow-x-auto pb-4 no-scrollbar">
         {['', 'Concierto', 'Teatro', 'Deportes', 'Feria'].map((cat) => (
-          <button
+          <Button
             key={cat}
             onClick={() => updateFilter('category', cat)}
-            className={`px-4 py-2 rounded-full border ${
-              category === cat
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-600'
-            }`}
+            variant={category === cat ? 'primary' : 'secondary'}
+            className="rounded-full px-6 py-1 text-sm whitespace-nowrap"
           >
             {cat === '' ? 'Todos' : cat}
-          </button>
+          </Button>
         ))}
       </div>
-      <div className="flex flex-wrap items-center gap-4 mb-8 bg-gray-50 p-4 rounded-xl border border-gray-100">
-        {/* Search */}
-        <input
-          type="text"
-          placeholder="¿Qué buscas?"
-          className="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 outline-none flex-1"
+
+      {/* Barra de Búsqueda y Filtros Avanzados */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10 items-end bg-white p-6 rounded-lg shadow-sm">
+        <Input
+          label="Búsqueda"
+          placeholder="¿Qué quieres hacer?"
           value={search}
           onChange={(e) => updateFilter('search', e.target.value)}
+          className="md:col-span-1"
         />
 
-        {/* Location Filter */}
-        <input
-          type="text"
-          placeholder="Ubicación..."
-          className="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 outline-none"
+        <Input
+          label="Ubicación"
+          placeholder="Ciudad o lugar..."
           value={location}
           onChange={(e) => updateFilter('location', e.target.value)}
         />
 
-        {/* Date Filter */}
-        <input
+        <Input
+          label="Fecha"
           type="date"
-          className="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
           value={date}
           onChange={(e) => updateFilter('date', e.target.value)}
         />
-
-        {/* The Reset Button */}
-        {(category || search || location || date) && (
-          <button
-            onClick={() => setSearchParams({})}
-            className="text-sm text-red-600 hover:text-red-800 font-semibold transition-colors"
-          >
-            Limpiar filtros ×
-          </button>
-        )}
+        <div className="flex justify-end gap-4">
+          {(category || search || location || date) && (
+            <Button
+              onClick={() => setSearchParams({})}
+              className="text-sm text-red-600 hover:text-red-700 font-bold px-2 py-2"
+            >
+              Limpiar ×
+            </Button>
+          )}
+        </div>
       </div>
 
       {loading ? (

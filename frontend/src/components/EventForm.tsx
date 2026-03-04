@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Event } from '../types/event';
 import { useNavigate } from 'react-router-dom';
 import { formatDateForInput } from '../utils/dateFormatter';
@@ -60,6 +60,9 @@ const EventForm = ({
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
+      // Clean up previous preview URL if exists
+      if (preview) URL.revokeObjectURL(preview);
+
       setPreview(URL.createObjectURL(selectedFile)); // Generates local preview
     }
   };
@@ -128,10 +131,14 @@ const EventForm = ({
         />
 
         <div className="space-y-1">
-          <label className="block text-sm font-semibold text-gray-700">
+          <label
+            htmlFor="category-select"
+            className="block text-sm font-semibold text-gray-700"
+          >
             Categoría
           </label>
           <select
+            id="category-select"
             name="category"
             value={formData.category}
             onChange={handleChange}

@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { useNavigate } from 'react-router-dom';
 import type { User } from '../types/user';
+import Button from '../components/Buttons';
 
 const UserProfile = () => {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
   const [profile, setProfile] = useState<User | null>(null);
 
   useEffect(() => {
@@ -22,52 +20,78 @@ const UserProfile = () => {
         setLoading(false);
       }
     };
-
     fetchProfile();
   }, []);
 
-  if (loading) return <p>Cargando...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center py-20">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+      </div>
+    );
+
+  if (error) return <p className="text-red-500 text-center py-10">{error}</p>;
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold mb-6">Mi Perfil</h1>
+      <Button to="/dashboard" variant="secondary" className="mb-6 w-fit">
+        ← Volver al Panel
+      </Button>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Mi Perfil</h1>
+
       {profile ? (
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">{profile.name}</h2>
-          <p>
-            <strong>Email:</strong> {profile.email}
-          </p>
-          {profile.businessName && (
-            <p>
-              <strong>Negocio:</strong> {profile.businessName}
-            </p>
-          )}
-          {profile.businessAddress && (
-            <p>
-              <strong>Dirección:</strong> {profile.businessAddress}
-            </p>
-          )}
-          {profile.description && (
-            <p>
-              <strong>Descripción:</strong> {profile.description}
-            </p>
-          )}
-          <button
-            onClick={() => navigate('/profile/change-password')}
-            className="mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700"
-          >
-            Cambiar Contraseña
-          </button>
-          <button
-            onClick={() => navigate('/profile/edit')}
-            className="mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-          >
-            Editar Perfil
-          </button>
+        <div className="bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
+          <div className="space-y-4 text-gray-700">
+            <div className="border-b pb-4">
+              <h2 className="text-2xl font-bold text-blue-900">
+                {profile.name}
+              </h2>
+              <p className="text-gray-500">{profile.email}</p>
+            </div>
+
+            {profile.businessName && (
+              <div className="flex flex-col">
+                <span className="text-xs font-bold uppercase text-gray-400">
+                  Negocio
+                </span>
+                <p className="text-lg">{profile.businessName}</p>
+              </div>
+            )}
+
+            {profile.businessAddress && (
+              <div className="flex flex-col">
+                <span className="text-xs font-bold uppercase text-gray-400">
+                  Dirección
+                </span>
+                <p className="text-lg">{profile.businessAddress}</p>
+              </div>
+            )}
+
+            {profile.description && (
+              <div className="flex flex-col">
+                <span className="text-xs font-bold uppercase text-gray-400">
+                  Descripción
+                </span>
+                <p className="text-lg italic text-gray-600">
+                  "{profile.description}"
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-10 flex flex-wrap gap-4 border-t pt-6">
+            <Button to="/profile/edit" variant="primary" className="px-8">
+              Editar Perfil
+            </Button>
+            <Button to="/profile/change-password" variant="secondary">
+              Cambiar Contraseña
+            </Button>
+          </div>
         </div>
       ) : (
-        <p>No se encontró el perfil.</p>
+        <div className="text-center py-10 bg-gray-50 rounded-xl">
+          <p className="text-gray-500">No se encontró el perfil.</p>
+        </div>
       )}
     </div>
   );

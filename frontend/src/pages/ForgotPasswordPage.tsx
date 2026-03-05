@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import api from '../api/axios';
 import axios from 'axios';
+import AuthLayout from '../components/AuthLayout';
+import Input from '../components/Input';
+import Button from '../components/Buttons';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +20,7 @@ const ForgotPasswordPage = () => {
     try {
       await api.post('/auth/forgot-password', { email });
       setMessage(
-        'If an account exists with that email, we have sent reset instructions.'
+        'Si existe una cuenta asociada a ese correo, se ha enviado un mensaje con instrucciones de recuperación.'
       );
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -29,43 +32,36 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full space-y-8 p-10 bg-white rounded-xl shadow-lg">
-        <h2 className="text-center text-3xl font-extrabold text-gray-900">
-          Reset Password
-        </h2>
+    <AuthLayout
+      title="¿Olvidaste tu contraseña?"
+      subtitle="Ingresa tu email para recibir instrucciones de recuperación"
+    >
+      {message && (
+        <div className="mb-4 p-3 bg-green-50 border-l-4 border-green-500 text-green-700 text-sm">
+          {message}
+        </div>
+      )}
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm">
+          {error}
+        </div>
+      )}
 
-        {message && (
-          <p className="text-green-600 text-sm text-center bg-green-50 p-2 rounded">
-            {message}
-          </p>
-        )}
-        {error && (
-          <p className="text-red-500 text-sm text-center bg-red-50 p-2 rounded">
-            {error}
-          </p>
-        )}
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        <Input
+          label="Email"
+          type="email"
+          required
+          placeholder="tu@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <input
-            type="email"
-            required
-            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Enter your email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300"
-          >
-            {loading ? 'Sending...' : 'Send Reset Link'}
-          </button>
-        </form>
-      </div>
-    </div>
+        <Button type="submit" isLoading={loading} className="w-full">
+          Enviar Link de Recuperación
+        </Button>
+      </form>
+    </AuthLayout>
   );
 };
 

@@ -1,6 +1,8 @@
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Event } from '../types/event';
-import { useNavigate } from 'react-router-dom';
+import { formatDateForInput } from '../utils/dateFormatter';
+import Input from './Input';
+import Button from './Buttons';
 
 interface EventFormProps {
   initialData?: Event;
@@ -15,7 +17,6 @@ const EventForm = ({
   buttonText,
   loading,
 }: EventFormProps) => {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState<Event>({
     title: '',
     description: '',
@@ -27,26 +28,23 @@ const EventForm = ({
 
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
+  const selectFileClasses =
+    'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm bg-white';
 
   useEffect(() => {
-    if (initialData && initialData.date) {
-      // Create the Date object
-      const dateObj = new Date(initialData.date);
-      // Extract local components
-      const year = dateObj.getFullYear();
-      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-      const day = String(dateObj.getDate()).padStart(2, '0');
-      const hours = String(dateObj.getHours()).padStart(2, '0');
-      const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-
-      // Format to ISO local: YYYY-MM-DDTHH:mm
-      const localISO = `${year}-${month}-${day}T${hours}:${minutes}`;
+    if (initialData) {
+      // Convert date from DB to local ISO format for input
       setFormData({
         ...initialData,
-        date: localISO,
+        date: initialData.date ? formatDateForInput(initialData.date) : '',
       });
     }
   }, [initialData]);
+
+  // Helper functions to split date and time for the form inputs
+  const getDatePart = () => formData.date.split('T')[0] || '';
+  const getTimePart = () =>
+    formData.date.split('T')[1]?.substring(0, 5) || '12:00';
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -55,17 +53,14 @@ const EventForm = ({
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  // Helper functions to split date and time for the form inputs
-  const getDatePart = () => (formData.date ? formData.date.split('T')[0] : '');
-  const getTimePart = () => {
-    if (!formData.date || !formData.date.includes('T')) return '';
-    return formData.date.split('T')[1].substring(0, 5);
-  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
+      // Clean up previous preview URL if exists
+      if (preview) URL.revokeObjectURL(preview);
+
       setPreview(URL.createObjectURL(selectedFile)); // Generates local preview
     }
   };
@@ -77,90 +72,73 @@ const EventForm = ({
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <button
-        type="button"
-        onClick={() => navigate(-1)}
-        className="flex items-center text-blue-600 mb-6 hover:underline"
-      >
+      <Button to="/dashboard" variant="secondary" className="mb-6 w-fit">
         &larr; Volver
-      </button>
+      </Button>
 
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-lg rounded-lg p-6 space-y-6"
       >
-        <h2 className="text-2xl font-bold text-gray-800">{buttonText}</h2>
-
-        <div className="space-y-2">
-          <label className="block font-medium text-gray-700">
-            Título del Evento
-          </label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+        <Input
+          label="Título"
+          placeholder="Ej: Jam de Rock Nacional"
+          type="text"
+          name="title"
+          value={formData.title}
+          onChange={handleChange}
+          required
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="block font-medium text-gray-700">Fecha</label>
-            <input
-              type="date"
-              name="date"
-              value={getDatePart()}
-              onChange={(e) => {
-                const time = getTimePart() || '12:00'; // Hora por defecto si no hay
-                setFormData({
-                  ...formData,
-                  date: `${e.target.value}T${time}:00`,
-                });
-              }}
-              className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="block font-medium text-gray-700">Hora</label>
-            <input
-              type="time"
-              value={getTimePart()}
-              onChange={(e) => {
-                const date =
-                  getDatePart() || new Date().toISOString().split('T')[0];
-                setFormData({
-                  ...formData,
-                  date: `${date}T${e.target.value}:00`,
-                });
-              }}
-              className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="block font-medium text-gray-700">Ubicación</label>
-          <input
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+          <Input
+            label="Fecha"
+            type="date"
+            value={getDatePart()}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                date: `${e.target.value}T${getTimePart()}`,
+              })
+            }
+            required
+          />
+          <Input
+            label="Hora"
+            type="time"
+            value={getTimePart()}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                date: `${getDatePart()}T${e.target.value}`,
+              })
+            }
             required
           />
         </div>
+        <Input
+          label="Ubicación"
+          type="text"
+          name="location"
+          value={formData.location}
+          placeholder="Dirección o lugar del evento"
+          onChange={handleChange}
+          required
+        />
 
-        <div className="space-y-2">
-          <label className="block font-medium text-gray-700">Categoría</label>
+        <div className="space-y-1">
+          <label
+            htmlFor="category-select"
+            className="block text-sm font-semibold text-gray-700"
+          >
+            Categoría
+          </label>
           <select
+            id="category-select"
             name="category"
             value={formData.category}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+            className={selectFileClasses}
           >
             <option value="Concierto">Concierto</option>
             <option value="Teatro">Teatro</option>
@@ -169,9 +147,9 @@ const EventForm = ({
           </select>
         </div>
 
-        <div className="space-y-2">
-          <label className="block font-medium text-gray-700">
-            URL de la Imagen (Opcional)
+        <div className="space-y-1">
+          <label className="block text-sm font-semibold text-gray-700">
+            Imagen del Evento
           </label>
           <input
             type="file"
@@ -179,38 +157,40 @@ const EventForm = ({
             name="imageUrl"
             //value={formData.imageUrl || ''}
             onChange={handleFileChange}
-            className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+            className={`${selectFileClasses} file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer`}
             placeholder="https://ejemplo.com/imagen.jpg"
           />
           {/* show the preview if exists or the actual image if editing */}
           {(preview || formData.imageUrl) && (
-            <img
-              src={preview || formData.imageUrl}
-              alt="Preview"
-              className="mt-4 h-48 w-full object-cover rounded-md border"
-            />
+            <div className="mt-4 relative group">
+              <img
+                src={preview || formData.imageUrl}
+                alt="Preview"
+                className="h-48 w-full object-cover rounded-xl border-2 border-dashed border-gray-200"
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-0 transition-all rounded-xl" />
+            </div>
           )}
         </div>
 
-        <div className="space-y-2">
-          <label className="block font-medium text-gray-700">Descripción</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-            rows={4}
-            required
-          />
-        </div>
+        <Input
+          label="Descripción del evento"
+          isTextArea={true}
+          name="description"
+          placeholder="Describe de qué trata el evento..."
+          value={formData.description}
+          onChange={handleChange}
+          rows={4}
+          required
+        />
 
-        <button
+        <Button
           type="submit"
-          disabled={loading}
-          className="w-full py-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+          isLoading={loading}
+          className="w-full py-2 text-lg"
         >
-          {loading ? 'Guardando...' : buttonText}
-        </button>
+          {buttonText}
+        </Button>
       </form>
     </div>
   );

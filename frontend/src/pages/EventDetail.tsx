@@ -1,12 +1,11 @@
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { useNavigate } from 'react-router-dom';
 import type { Event } from '../types/event';
+import Button from '../components/Buttons';
 
 const EventDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [event, setEvent] = useState<Event | null>(null);
@@ -46,12 +45,9 @@ const EventDetail = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
-      <button
-        onClick={() => navigate(-1)}
-        className="text-blue-600 hover:underline mb-6 flex items-center"
-      >
+      <Button to="/" variant="secondary" className="mb-6 w-fit">
         ← Volver
-      </button>
+      </Button>
 
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
         {event.imageUrl && (
@@ -96,13 +92,11 @@ const EventDetail = () => {
             </p>
           </div>
 
-          <div className="mt-10 p-6 bg-blue-50 rounded-xl border border-blue-100 text-center">
-            <p className="text-blue-800 font-medium">
+          <div className="mt-10 p-6 bg-blue-50 rounded-xl border border-blue-100 text-center flex flex-col items-center gap-4">
+            <p className="text-blue-800 font-semibold text-lg">
               ¿Te interesa este evento?
             </p>
-            <button className="mt-4 bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors">
-              Reservar Entradas
-            </button>
+            <Button variant="primary">Reservar Entradas</Button>
           </div>
         </div>
       </div>

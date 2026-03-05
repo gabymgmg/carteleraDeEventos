@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import Input from '../components/Input';
+import Button from '../components/Buttons';
 
 const EditUser = () => {
   const navigate = useNavigate();
@@ -66,79 +68,53 @@ const EditUser = () => {
     <div className="max-w-2xl mx-auto px-4 py-10">
       <h1 className="text-2xl font-bold mb-6">Editar Perfil</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Nombre
-          </label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-          />
+        <Input
+          label="Nombre del Organizador"
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+        />
+        <Input
+          label="Email"
+          type="email"
+          name="email"
+          value={formData.email}
+          readOnly
+          disabled
+        />
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-left">
+          Perfil del Negocio
+        </p>
+        <Input
+          label="Nombre"
+          type="text"
+          name="businessName"
+          value={formData.businessName}
+          onChange={handleChange}
+        />
+        <Input
+          label="Dirección"
+          type="text"
+          name="businessAddress"
+          value={formData.businessAddress}
+          onChange={handleChange}
+        />
+        <Input
+          label="Descripción"
+          isTextArea
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+        />
+        <div className="flex items-center gap-4 pt-2">
+          <Button type="submit" isLoading={loading}>
+            Guardar Cambios
+          </Button>
+          <Button to="/profile" variant="secondary">
+            Cancelar
+          </Button>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-500">
-            Email
-          </label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            readOnly
-            disabled
-            className="mt-1 block w-full border border-gray-200 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed p-2 shadow-inner"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Nombre del Negocio
-          </label>
-          <input
-            type="text"
-            name="businessName"
-            value={formData.businessName}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Dirección del Negocio
-          </label>
-          <input
-            type="text"
-            name="businessAddress"
-            value={formData.businessAddress}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Descripción
-          </label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-        <button
-          type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-        >
-          Guardar Cambios
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate('/profile')}
-          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 font-medium"
-        >
-          Cancelar
-        </button>
       </form>
     </div>
   );

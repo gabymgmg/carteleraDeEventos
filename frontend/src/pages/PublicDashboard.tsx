@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import type { Event } from '../types/event';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import EventCard from '../components/EventCard';
+import Input from '../components/Input';
+import Button from '../components/Buttons';
 
 const PublicDashboard = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Get current values from URL
+  // Obtenemos los valores actuales de la URL
   const category = searchParams.get('category') || '';
   const search = searchParams.get('search') || '';
   const location = searchParams.get('location') || '';
@@ -16,19 +19,22 @@ const PublicDashboard = () => {
 
   useEffect(() => {
     const fetchEvents = async () => {
+      setLoading(true);
       try {
         const { data } = await api.get(`/events?${searchParams.toString()}`);
         setEvents(data);
       } catch (error) {
         console.error('Error fetching events:', error);
         setEvents([]);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchEvents();
-  }, [searchParams]); // It re-runs whenever the URL changes
+  }, [searchParams]); // Se ejecuta cada vez que la URL cambia
 
-  // Helper to "translate" filter changes into URL updates
+  // Función para actualizar los filtros en la URL
   const updateFilter = (key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
     if (value) {
@@ -36,102 +42,101 @@ const PublicDashboard = () => {
     } else {
       newParams.delete(key);
     }
-    // Changes the text in the URL
     setSearchParams(newParams);
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <h1 className="text-3xl font-bold mb-6">Eventos Disponibles</h1>
-      <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+      <h1 className="text-3xl font-extrabold text-gray-900 mb-8">
+        Descubre Eventos
+      </h1>
+
+      {/* Filtros de Categoría */}
+      <div className="flex gap-3 mb-8 overflow-x-auto pb-2 no-scrollbar">
         {['', 'Concierto', 'Teatro', 'Deportes', 'Feria'].map((cat) => (
-          <button
+          <Button
             key={cat}
             onClick={() => updateFilter('category', cat)}
-            className={`px-4 py-2 rounded-full border ${
-              category === cat
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-600'
-            }`}
+            variant={category === cat ? 'primary' : 'secondary'}
+            className="rounded-full px-6 py-1 text-sm whitespace-nowrap w-fit"
           >
             {cat === '' ? 'Todos' : cat}
-          </button>
+          </Button>
         ))}
       </div>
-      <div className="flex flex-wrap items-center gap-4 mb-8 bg-gray-50 p-4 rounded-xl border border-gray-100">
-        {/* Search */}
-        <input
-          type="text"
-          placeholder="¿Qué buscas?"
-          className="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 outline-none flex-1"
+
+      {/* Barra de Búsqueda y Filtros Avanzados */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10 items-end bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <Input
+          label="¿Qué buscas?"
+          placeholder="Ej: Rock, Jazz..."
           value={search}
           onChange={(e) => updateFilter('search', e.target.value)}
+          className="md:col-span-1"
         />
 
-        {/* Location Filter */}
-        <input
-          type="text"
-          placeholder="Ubicación..."
-          className="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 outline-none"
+        <Input
+          label="¿Dónde?"
+          placeholder="Ciudad..."
           value={location}
           onChange={(e) => updateFilter('location', e.target.value)}
         />
 
-        {/* Date Filter */}
-        <input
+        <Input
+          label="¿Cuándo?"
           type="date"
-          className="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
           value={date}
           onChange={(e) => updateFilter('date', e.target.value)}
         />
 
-        {/* The Reset Button */}
-        {(category || search || location || date) && (
-          <button
-            onClick={() => setSearchParams({})}
-            className="text-sm text-red-600 hover:text-red-800 font-semibold transition-colors"
-          >
-            Limpiar filtros ×
-          </button>
-        )}
+        <div className="flex flex-col justify-end">
+          {/* Simula el espacio del label de los otros inputs */}
+          <div className="hidden md:block h-5 mb-1"></div>
+
+          {(category || search || location || date) && (
+            <button
+              onClick={() => setSearchParams({})}
+              className="text-sm text-red-500 hover:text-red-700 font-semibold py-2 transition-colors"
+            >
+              Limpiar filtros ×
+            </button>
+          )}
+        </div>
       </div>
 
-      {events.length === 0 ? (
-        <p className="text-gray-500">
-          No hay eventos disponibles en este momento.
-        </p>
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      ) : events.length === 0 ? (
+        <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+          <p className="text-gray-500 text-lg mb-4">
+            No hay eventos que coincidan con tu búsqueda.
+          </p>
+          <Button
+            onClick={() => setSearchParams({})}
+            variant="secondary"
+            className="w-fit"
+          >
+            Ver todos los eventos
+          </Button>
+        </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {events.map((event) => (
-            <div
+            <EventCard
               key={event._id}
-              className="bg-white shadow rounded-lg overflow-hidden"
-            >
-              {event.imageUrl && (
-                <img
-                  src={event.imageUrl}
-                  alt={event.title}
-                  className="w-full h-48 object-cover"
-                />
-              )}
-              <div className="p-4">
-                <h2 className="text-xl font-semibold">{event.title}</h2>
-                <p className="text-gray-600 mt-2">{event.description}</p>
-                <p className="text-gray-500 mt-4 text-sm">
-                  {new Date(event.date).toLocaleDateString()} - 📍
-                  {event.location}
-                </p>
-                <p className="text-gray-500 text-sm mt-1">
-                  Categoría: {event.category}
-                </p>
-              </div>
-              <Link
-                to={`/event/${event._id}`}
-                className="mt-4 block text-center bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 rounded-md transition-colors"
-              >
-                Ver Detalles
-              </Link>
-            </div>
+              event={event}
+              actions={
+                <Button
+                  to={`/event/${event._id}`}
+                  variant="primary"
+                  className="w-full"
+                >
+                  Ver Detalles
+                </Button>
+              }
+            />
           ))}
         </div>
       )}

@@ -1,13 +1,11 @@
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { useNavigate } from 'react-router-dom';
 import type { Event } from '../types/event';
 import Button from '../components/Buttons';
 
 const EventDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [event, setEvent] = useState<Event | null>(null);
@@ -47,7 +45,7 @@ const EventDetail = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
-      <Button onClick={() => navigate(-1)} variant="secondary" className="mb-6">
+      <Button to="/" variant="secondary" className="mb-6 w-fit">
         ← Volver
       </Button>
 

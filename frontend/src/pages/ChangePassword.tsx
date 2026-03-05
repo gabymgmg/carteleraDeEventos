@@ -95,11 +95,7 @@ const ChangePassword = () => {
             Cambiar Contraseña
           </Button>
 
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => navigate('/profile')}
-          >
+          <Button to="/profile" variant="secondary">
             Cancelar
           </Button>
         </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import api from '../api/axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
 import AuthLayout from '../components/AuthLayout';
@@ -12,8 +12,9 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const { login } = useAuth(); // Get login function from context
+
+  // Obtenemos la función login del contexto global
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,17 +81,17 @@ const LoginPage = () => {
         </Button>
       </form>
 
-          <div className="text-center mt-6">
-            <p className="text-sm text-gray-600">
-              ¿No tienes una cuenta?{' '}
-              <Link
-                to="/register"
-                className="text-blue-600 hover:text-blue-700 font-bold transition-colors"
-              >
-                Regístrate aquí
-              </Link>
-            </p>
-          </div>
+      <div className="text-center mt-6">
+        <p className="text-sm text-gray-600">
+          ¿No tienes una cuenta?{' '}
+          <Link
+            to="/register"
+            className="text-blue-600 hover:text-blue-700 font-bold transition-colors"
+          >
+            Regístrate aquí
+          </Link>
+        </p>
+      </div>
     </AuthLayout>
   );
 };

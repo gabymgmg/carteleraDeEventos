@@ -69,7 +69,7 @@ const EditUser = () => {
       <h1 className="text-2xl font-bold mb-6">Editar Perfil</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
-          label="Nombren del Organizador"
+          label="Nombre del Organizador"
           type="text"
           name="name"
           value={formData.name}
@@ -83,15 +83,18 @@ const EditUser = () => {
           readOnly
           disabled
         />
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-left">
+          Perfil del Negocio
+        </p>
         <Input
-          label="Nombre del Negocio"
+          label="Nombre"
           type="text"
           name="businessName"
           value={formData.businessName}
           onChange={handleChange}
         />
         <Input
-          label="Dirección del Negocio"
+          label="Dirección"
           type="text"
           name="businessAddress"
           value={formData.businessAddress}
@@ -108,11 +111,7 @@ const EditUser = () => {
           <Button type="submit" isLoading={loading}>
             Guardar Cambios
           </Button>
-          <Button
-            type="button"
-            onClick={() => navigate('/profile')}
-            variant="secondary"
-          >
+          <Button to="/profile" variant="secondary">
             Cancelar
           </Button>
         </div>

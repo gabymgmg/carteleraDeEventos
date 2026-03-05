@@ -3,6 +3,7 @@ import api from '../api/axios';
 import axios from 'axios';
 import AuthLayout from '../components/AuthLayout';
 import Input from '../components/Input';
+import Button from '../components/Buttons';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
@@ -19,7 +20,7 @@ const ForgotPasswordPage = () => {
     try {
       await api.post('/auth/forgot-password', { email });
       setMessage(
-        'If an account exists with that email, we have sent reset instructions.'
+        'Si existe una cuenta asociada a ese correo, se ha enviado un mensaje con instrucciones de recuperación.'
       );
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -56,13 +57,9 @@ const ForgotPasswordPage = () => {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full flex justify-center py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all active:scale-95 disabled:bg-blue-300"
-        >
-          {loading ? 'Enviando...' : 'Enviar Link de Recuperación'}
-        </button>
+        <Button type="submit" isLoading={loading} className="w-full">
+          Enviar Link de Recuperación
+        </Button>
       </form>
     </AuthLayout>
   );

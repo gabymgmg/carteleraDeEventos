@@ -72,7 +72,7 @@ const RegisterPage = () => {
     }
   };
 
-return (
+  return (
     <AuthLayout title="Registro" subtitle="Para Organizadores de Eventos">
       {message ? (
         <div className="text-center space-y-6 py-8">
@@ -97,9 +97,7 @@ return (
             <h2 className="text-3xl font-bold text-gray-900">
               ¡Aplicación Recibida!
             </h2>
-            <p className="text-gray-600 leading-relaxed px-4">
-              {message}
-            </p>
+            <p className="text-gray-600 leading-relaxed px-4">{message}</p>
           </div>
           <div className="pt-4">
             <Button to="/" variant="primary" className="w-full">

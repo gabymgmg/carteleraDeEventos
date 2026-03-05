@@ -42,11 +42,18 @@ const AdminDashboard = () => {
     }
   };
 
-  if (loading) return <div className="p-8 text-center text-gray-500">Cargando solicitudes...</div>;
+  if (loading)
+    return (
+      <div className="p-8 text-center text-gray-500">
+        Cargando solicitudes...
+      </div>
+    );
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-gray-900">Solicitudes de Organizadores</h1>
+      <h1 className="text-2xl font-bold mb-6 text-gray-900">
+        Solicitudes de Organizadores
+      </h1>
 
       {error && (
         <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm">
@@ -69,14 +76,17 @@ const AdminDashboard = () => {
                 <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
                   Acción
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
               {pendingUsers.map((user) => (
-                <tr key={user._id} className="hover:bg-gray-50 transition-colors">
+                <tr
+                  key={user._id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-bold text-gray-900">
                       {user.name}

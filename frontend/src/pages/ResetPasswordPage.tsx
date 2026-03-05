@@ -5,6 +5,7 @@ import axios from 'axios';
 import { validatePassword } from '../utils/validation';
 import AuthLayout from '../components/AuthLayout';
 import Input from '../components/Input';
+import Button from '../components/Buttons';
 
 const ResetPasswordPage = () => {
   const { token } = useParams<{ token: string }>();
@@ -19,19 +20,18 @@ const ResetPasswordPage = () => {
     e.preventDefault();
     setError('');
     setMessage('');
-    // Password validation
+
     const validationError = validatePassword(password, confirmPassword);
     if (validationError) return setError(validationError);
 
     setLoading(true);
     try {
-      // We sent the token in the URL and the password in the body
       await api.post(`/auth/reset-password/${token}`, { password });
-      setMessage('Password updated! Redirecting to login...');
-      setTimeout(() => navigate('/login'), 3000); // Redirect after 3 seconds
+      setMessage('¡Contraseña actualizada! Redirigiendo al login...');
+      setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || 'Reset failed');
+        setError(err.response?.data?.message || 'Error al restablecer');
       }
     } finally {
       setLoading(false);
@@ -39,23 +39,26 @@ const ResetPasswordPage = () => {
   };
 
   return (
-    <AuthLayout title="Reset Password" subtitle="Configura tu nueva contraseña">
+    <AuthLayout
+      title="Restablecer Contraseña"
+      subtitle="Configura tu nueva contraseña"
+    >
       {message && (
-        <p className="text-green-600 text-center mt-4 bg-green-50 p-2 rounded">
+        <div className="mb-4 p-3 bg-green-50 border-l-4 border-green-500 text-green-700 text-sm rounded">
           {message}
-        </p>
+        </div>
       )}
       {error && (
-        <p className="text-red-600 text-center mt-4 bg-red-50 p-2 rounded">
+        <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded">
           {error}
-        </p>
+        </div>
       )}
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <Input
           label="Nueva Contraseña"
           type="password"
-          placeholder="Enter new password"
+          placeholder="Tu nueva contraseña"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -63,19 +66,15 @@ const ResetPasswordPage = () => {
         <Input
           label="Confirmar Nueva Contraseña"
           type="password"
-          placeholder="Confirmar nueva contraseña"
+          placeholder="Repite la contraseña"
           required
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all active:scale-95 disabled:bg-blue-300"
-        >
-          {loading ? 'Updating...' : 'Reset Password'}
-        </button>
+        <Button type="submit" isLoading={loading} className="w-full">
+          Actualizar Contraseña
+        </Button>
       </form>
     </AuthLayout>
   );

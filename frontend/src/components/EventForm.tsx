@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import type { Event } from '../types/event';
-import { useNavigate } from 'react-router-dom';
 import { formatDateForInput } from '../utils/dateFormatter';
 import Input from './Input';
 import Button from './Buttons';
@@ -18,7 +17,6 @@ const EventForm = ({
   buttonText,
   loading,
 }: EventFormProps) => {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState<Event>({
     title: '',
     description: '',
@@ -74,7 +72,7 @@ const EventForm = ({
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <Button onClick={() => navigate(-1)} variant="secondary" className="mb-6">
+      <Button to="/dashboard" variant="secondary" className="mb-6 w-fit">
         &larr; Volver
       </Button>
 
@@ -82,8 +80,6 @@ const EventForm = ({
         onSubmit={handleSubmit}
         className="bg-white shadow-lg rounded-lg p-6 space-y-6"
       >
-        <h2 className="text-2xl font-bold text-gray-800">{buttonText}</h2>
-
         <Input
           label="Título"
           placeholder="Ej: Jam de Rock Nacional"

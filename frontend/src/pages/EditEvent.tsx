@@ -42,7 +42,7 @@ const EditEvent = () => {
     formDataToSend.append('location', data.location);
     formDataToSend.append('category', data.category || 'Concierto');
     // Image
-    if (data.imageFile) {
+    if (data.imageFile instanceof File) {
       formDataToSend.append('image', data.imageFile);
     } else {
       formDataToSend.append('imageUrl', data.imageUrl || ''); // Send existing URL if no new file

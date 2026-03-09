@@ -1,7 +1,6 @@
-
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import Button from './Buttons'; 
+import Button from './Buttons';
 
 describe('Button Component', () => {
   it('should render the button with the correct text', () => {
@@ -18,7 +17,7 @@ describe('Button Component', () => {
   it('should call onClick function when clicked', () => {
     const handleClick = vi.fn(); // Spy fn
     render(<Button onClick={handleClick}>Click me</Button>);
-    
+
     const button = screen.getByText('Click me');
     fireEvent.click(button);
 

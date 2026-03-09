@@ -87,7 +87,11 @@ const OwnerDashboard = () => {
           <p className="text-gray-500 mb-6 text-lg">
             Aún no has publicado ningún evento.
           </p>
-          <Button to="/create-event" variant="primary">
+          <Button
+            to="/create-event"
+            variant="primary"
+            className="w-fit mx-auto"
+          >
             Publicar mi primer evento
           </Button>
         </div>

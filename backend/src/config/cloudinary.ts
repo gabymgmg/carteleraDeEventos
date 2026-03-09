@@ -1,5 +1,4 @@
 import { v2 as cloudinary } from 'cloudinary';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import multer from 'multer';
 
 cloudinary.config({
@@ -8,17 +7,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: async (req, file) => {
-    return {
-      folder: 'events_app',
-      format: 'png',
-      public_id: file.originalname.split('.')[0] + '-' + Date.now(),
-    };
-  },
-});
-// Multer middleware
+// Usamos memoria para evitar la librería multer-storage-cloudinary que está rota
+const storage = multer.memoryStorage();
 const uploadCloud = multer({ storage });
 
 export default uploadCloud;

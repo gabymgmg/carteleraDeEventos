@@ -14,15 +14,20 @@ const CreateEvent = () => {
     setLoading(true);
     const formDataToSend = new FormData();
 
-    // Add content
     formDataToSend.append('title', data.title);
     formDataToSend.append('description', data.description);
     formDataToSend.append('date', data.date);
     formDataToSend.append('location', data.location);
     formDataToSend.append('category', data.category || 'Concierto');
-    // 'image should match with name configured in uplpoadCloud.single
-    if (data.imageFile) {
+
+    if (data.imageFile instanceof File) {
+      console.log('Enviando archivo real:', data.imageFile.name);
+      // Usamos 'image' para que coincida con .single('image')
       formDataToSend.append('image', data.imageFile);
+    } else {
+      console.error(
+        '¡CUIDADO! imageFile no es un archivo válido en este momento'
+      );
     }
 
     try {
@@ -32,7 +37,8 @@ const CreateEvent = () => {
         },
       });
       navigate('/dashboard');
-    } catch (err) {
+    } catch (err: any) {
+      console.error('Error completo:', err.response?.data || err.message);
       setError('Error al crear el evento');
     } finally {
       setLoading(false);

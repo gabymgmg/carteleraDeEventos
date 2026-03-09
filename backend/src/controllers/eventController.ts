@@ -7,24 +7,29 @@ export const createEvent = async (req: Request, res: Response) => {
     // Check if user exists first
     if (!req.user)
       return res.status(401).json({ message: 'Usuario no autenticado' });
-    const { title, description, date, location, category } = req.body;
-    const owner = req.user._id;
-    const finalImageUrl = req.file
-      ? req.file.path
-      : req.body.imageUrl ||
-        'https://via.placeholder.com/400x200?text=No+Image';
+    let finalImageUrl = 'https://via.placeholder.com/400x200?text=No+Image';
+    console.log('req.file:', req.file);
+    if (req.file) {
+      // Convertimos el buffer del archivo a base64 para enviarlo a Cloudinary
+      const b64 = Buffer.from(req.file.buffer).toString('base64');
+      let dataURI = 'data:' + req.file.mimetype + ';base64,' + b64;
+
+      const response = await cloudinary.uploader.upload(dataURI, {
+        folder: 'events_app',
+      });
+      finalImageUrl = response.secure_url;
+    }
+
     const event = new Event({
-      title,
-      description,
-      date,
-      location,
-      category,
+      ...req.body,
       imageUrl: finalImageUrl,
-      owner,
+      owner: req.user._id,
     });
+
     const savedEvent = await event.save();
     res.status(201).json(savedEvent);
   } catch (error: any) {
+    console.error('ERROR SUBIENDO A CLOUDINARY:', error);
     res.status(500).json({
       message: 'Error al crear el evento',
       debug: error.message,

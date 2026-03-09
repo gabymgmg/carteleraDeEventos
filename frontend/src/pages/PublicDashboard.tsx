@@ -116,7 +116,7 @@ const PublicDashboard = () => {
           <Button
             onClick={() => setSearchParams({})}
             variant="secondary"
-            className="w-fit"
+            className="w-fit mx-auto"
           >
             Ver todos los eventos
           </Button>

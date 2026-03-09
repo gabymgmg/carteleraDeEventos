@@ -55,13 +55,15 @@ const EventForm = ({
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('¡Archivo seleccionado!', e.target.files?.[0]); // <-- LOG CRÍTICO
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
-      // Clean up previous preview URL if exists
-      if (preview) URL.revokeObjectURL(preview);
 
-      setPreview(URL.createObjectURL(selectedFile)); // Generates local preview
+      //if (preview) URL.revokeObjectURL(preview);
+      const objectUrl = URL.createObjectURL(selectedFile);
+      console.log('Generando preview URL:', objectUrl); // <-- LOG CRÍTICO
+      setPreview(objectUrl);
     }
   };
 
@@ -162,13 +164,17 @@ const EventForm = ({
           />
           {/* show the preview if exists or the actual image if editing */}
           {(preview || formData.imageUrl) && (
-            <div className="mt-4 relative group">
-              <img
-                src={preview || formData.imageUrl}
-                alt="Preview"
-                className="h-48 w-full object-cover rounded-xl border-2 border-dashed border-gray-200"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-0 transition-all rounded-xl" />
+            <div className="mt-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Vista previa de la imagen
+              </label>
+              <div className="rounded-xl border-2 border-gray-200 overflow-hidden shadow-inner bg-gray-50">
+                <img
+                  src={preview || formData.imageUrl}
+                  alt="Preview"
+                  className="h-64 w-full object-contain" // 'object-contain' para que no se corte la foto
+                />
+              </div>
             </div>
           )}
         </div>

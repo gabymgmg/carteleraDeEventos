@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import Event from '../models/Event';
 import { v2 as cloudinary } from 'cloudinary';
 
-export const createEvent = async (req: any, res: Response) => {
+export const createEvent = async (req: Request, res: Response) => {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
@@ -36,29 +36,33 @@ export const getMyEvents = async (req: Request, res: Response) => {
 
 export const deleteEvent = async (req: Request, res: Response) => {
   try {
-    if (!req.user)
-      return res.status(401).json({ message: 'Usuario no autenticado' });
-    const id = req.params.id;
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
     const event = await Event.findOne({
-      _id: id,
+      _id: req.params.id,
       owner: req.user._id,
     });
+
     if (!event) {
-      return res.status(404).json({
-        message: 'Evento no encontrado o no tienes permiso para eliminarlo',
-      });
+      return res.status(404).json({ message: 'Evento no encontrado o no autorizado' });
     }
-    if (event.imageUrl && !event.imageUrl.includes('placeholder.com')) {
-      const parts = event.imageUrl.split('/');
-      const fileName = parts[parts.length - 1].split('.')[0];
-      const publicId = `events_app/${fileName}`;
-      const result = await cloudinary.uploader.destroy(publicId);
+
+    // Borramos de Cloudinary si no es un placeholder
+    if (event.imageUrl && event.imageUrl.includes('cloudinary')) {
+      try {
+        const parts = event.imageUrl.split('/');
+        const fileName = parts[parts.length - 1].split('.')[0];
+        const publicId = `events_app/${fileName}`;
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cloudErr) {
+        console.error("Error al borrar en Cloudinary:", cloudErr);
+      }
     }
-    await Event.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Evento eliminado exitosamente' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error al eliminar el evento', error });
+    
+    await event.deleteOne(); 
+    res.json({ message: 'Evento eliminado con éxito' });
+  } catch (error: any) {
+    res.status(500).json({ message: 'Error al eliminar', error: error.message });
   }
 };
 
@@ -71,16 +75,22 @@ export const updateEvent = async (req: Request, res: Response) => {
     const currentEvent = await Event.findById(id);
     if (!currentEvent)
       return res.status(404).json({ message: 'Evento no encontrado' });
-
+    // Verificación de autoría 
+    if (currentEvent.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'No tienes permiso para editar este evento' });
+    }
     const { title, description, date, location, category } = req.body;
     let finalImageUrl = currentEvent.imageUrl;
     if (req.file) {
-      if (currentEvent.imageUrl) {
-        // If an image exist, we erase it from cloudinary
-        const parts = currentEvent.imageUrl.split('/');
-        const fileNameWithExtension = parts[parts.length - 1]; // "imagen.jpg"
-        const publicId = `events_app/${fileNameWithExtension.split('.')[0]}`;
-        await cloudinary.uploader.destroy(publicId);
+      if (currentEvent.imageUrl && currentEvent.imageUrl.includes('cloudinary')) {
+        try {
+          const parts = currentEvent.imageUrl.split('/');
+          const lastPart = parts[parts.length - 1]; 
+          const publicId = `events_app/${lastPart.split('.')[0]}`;
+          await cloudinary.uploader.destroy(publicId);
+        } catch (clodinaryError) {
+          console.error("Error borrando imagen vieja:", clodinaryError);
+        }
       }
 
       finalImageUrl = req.file.path; // Update with new image URL

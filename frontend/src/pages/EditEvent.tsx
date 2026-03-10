@@ -44,15 +44,9 @@ const EditEvent = () => {
     // Image
     if (data.imageFile instanceof File) {
       formDataToSend.append('image', data.imageFile);
-    } else {
-      formDataToSend.append('imageUrl', data.imageUrl || ''); // Send existing URL if no new file
-    }
+    } 
     try {
-      await api.put(`/events/${id}`, formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await api.put(`/events/${id}`, formDataToSend);
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al actualizar el evento');

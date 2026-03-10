@@ -2,23 +2,12 @@ import { Request, Response } from 'express';
 import Event from '../models/Event';
 import { v2 as cloudinary } from 'cloudinary';
 
-export const createEvent = async (req: Request, res: Response) => {
+export const createEvent = async (req: any, res: Response) => {
   try {
-    // Check if user exists first
-    if (!req.user)
-      return res.status(401).json({ message: 'Usuario no autenticado' });
-    let finalImageUrl = 'https://via.placeholder.com/400x200?text=No+Image';
-    console.log('req.file:', req.file);
-    if (req.file) {
-      // Convertimos el buffer del archivo a base64 para enviarlo a Cloudinary
-      const b64 = Buffer.from(req.file.buffer).toString('base64');
-      let dataURI = 'data:' + req.file.mimetype + ';base64,' + b64;
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
-      const response = await cloudinary.uploader.upload(dataURI, {
-        folder: 'events_app',
-      });
-      finalImageUrl = response.secure_url;
-    }
+    // Si el storage funciona, Cloudinary pone la URL en req.file.path
+    const finalImageUrl = req.file?.path || 'https://via.placeholder.com/400x200?text=No+Image';
 
     const event = new Event({
       ...req.body,
@@ -29,11 +18,8 @@ export const createEvent = async (req: Request, res: Response) => {
     const savedEvent = await event.save();
     res.status(201).json(savedEvent);
   } catch (error: any) {
-    console.error('ERROR SUBIENDO A CLOUDINARY:', error);
-    res.status(500).json({
-      message: 'Error al crear el evento',
-      debug: error.message,
-    });
+    console.error("ERROR:", error);
+    res.status(500).json({ message: 'Error al crear', error: error.message });
   }
 };
 

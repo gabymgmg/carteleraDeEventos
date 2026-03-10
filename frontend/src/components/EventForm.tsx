@@ -28,12 +28,13 @@ const EventForm = ({
 
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
+  
   const selectFileClasses =
     'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm bg-white';
 
+  // Efecto para cargar datos iniciales (Edit Mode)
   useEffect(() => {
     if (initialData) {
-      // Convert date from DB to local ISO format for input
       setFormData({
         ...initialData,
         date: initialData.date ? formatDateForInput(initialData.date) : '',
@@ -41,7 +42,15 @@ const EventForm = ({
     }
   }, [initialData]);
 
-  // Helper functions to split date and time for the form inputs
+  // EFECTO DE LIMPIEZA: Libera la memoria de la URL cuando el componente se destruye
+  useEffect(() => {
+    return () => {
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
+
   const getDatePart = () => formData.date.split('T')[0] || '';
   const getTimePart = () =>
     formData.date.split('T')[1]?.substring(0, 5) || '12:00';
@@ -55,20 +64,32 @@ const EventForm = ({
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('¡Archivo seleccionado!', e.target.files?.[0]); // <-- LOG CRÍTICO
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
-      setFile(selectedFile);
+    const selectedFile = e.target.files?.[0];
 
-      //if (preview) URL.revokeObjectURL(preview);
+    if (selectedFile) {
+      // Si ya había una previsualización anterior, liberamos su memoria
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+
+      setFile(selectedFile);
+      
+      // Creamos la nueva URL y la guardamos en el estado
       const objectUrl = URL.createObjectURL(selectedFile);
-      console.log('Generando preview URL:', objectUrl); // <-- LOG CRÍTICO
       setPreview(objectUrl);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validación: debe haber una foto nueva o una URL existente
+    if (!file && !formData.imageUrl) {
+      alert('Por favor selecciona una imagen');
+      return;
+    }
+
+    // Combinamos los datos del formulario con el archivo binario
     onSubmit({ ...formData, imageFile: file } as any);
   };
 
@@ -118,6 +139,7 @@ const EventForm = ({
             required
           />
         </div>
+
         <Input
           label="Ubicación"
           type="text"
@@ -156,13 +178,10 @@ const EventForm = ({
           <input
             type="file"
             accept="image/*"
-            name="imageUrl"
-            //value={formData.imageUrl || ''}
             onChange={handleFileChange}
             className={`${selectFileClasses} file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer`}
-            placeholder="https://ejemplo.com/imagen.jpg"
           />
-          {/* show the preview if exists or the actual image if editing */}
+          
           {(preview || formData.imageUrl) && (
             <div className="mt-4">
               <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -172,7 +191,7 @@ const EventForm = ({
                 <img
                   src={preview || formData.imageUrl}
                   alt="Preview"
-                  className="h-64 w-full object-contain" // 'object-contain' para que no se corte la foto
+                  className="h-64 w-full object-contain"
                 />
               </div>
             </div>

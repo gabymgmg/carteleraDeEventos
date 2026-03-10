@@ -14,31 +14,25 @@ const CreateEvent = () => {
     setLoading(true);
     const formDataToSend = new FormData();
 
+    // 1. Agregamos los textos
     formDataToSend.append('title', data.title);
     formDataToSend.append('description', data.description);
     formDataToSend.append('date', data.date);
     formDataToSend.append('location', data.location);
-    formDataToSend.append('category', data.category || 'Concierto');
+    formDataToSend.append('category', data.category || 'Concierto'); // Valor por defecto si no se selecciona categoría
 
+    // 2. Agregamos el archivo 
     if (data.imageFile instanceof File) {
-      console.log('Enviando archivo real:', data.imageFile.name);
-      // Usamos 'image' para que coincida con .single('image')
       formDataToSend.append('image', data.imageFile);
     } else {
-      console.error(
-        '¡CUIDADO! imageFile no es un archivo válido en este momento'
-      );
+      console.error('Error: El archivo no es una instancia de File válida.');
     }
 
     try {
-      await api.post('/events', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await api.post('/events', formDataToSend);
       navigate('/dashboard');
-    } catch (err: any) {
-      console.error('Error completo:', err.response?.data || err.message);
+    } catch (err) {
+      console.error('Error en la petición:', err);
       setError('Error al crear el evento');
     } finally {
       setLoading(false);

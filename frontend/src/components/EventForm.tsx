@@ -3,6 +3,7 @@ import type { Event } from '../types/event';
 import { formatDateForInput } from '../utils/dateFormatter';
 import Input from './Input';
 import Button from './Buttons';
+import { validateEvent } from '../utils/validation';
 
 interface EventFormProps {
   initialData?: Event;
@@ -28,7 +29,7 @@ const EventForm = ({
 
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
-  
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const selectFileClasses =
     'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm bg-white';
 
@@ -55,12 +56,27 @@ const EventForm = ({
   const getTimePart = () =>
     formData.date.split('T')[1]?.substring(0, 5) || '12:00';
 
+  const clearError = (name: string) => {
+    if (errors[name]) {
+      setErrors((prev) => {
+        // Creamos una copia de los errores actuales (prev) para no romper el estado original
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Actualiza el valor del formulario 
+    setFormData({ ...formData, [name]: value });
+
+    // Si había un error para este campo, se borra
+    clearError(name);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,16 +98,18 @@ const EventForm = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validación: debe haber una foto nueva o una URL existente
-    if (!file && !formData.imageUrl) {
-      alert('Por favor selecciona una imagen');
+    const validationErrors = validateEvent(formData, file);
+    // If there are validation errors, we set them in state and stop the submission
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
-
-    // Combinamos los datos del formulario con el archivo binario
+    setErrors({}); // Clear any previous errors if validation passes
     onSubmit({ ...formData, imageFile: file } as any);
+
   };
+
+  
 
   return (
     <div className="max-w-2xl mx-auto p-4">
@@ -110,33 +128,37 @@ const EventForm = ({
           name="title"
           value={formData.title}
           onChange={handleChange}
-          required
+          error={errors.title}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             label="Fecha"
+            name="date"
             type="date"
             value={getDatePart()}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                date: `${e.target.value}T${getTimePart()}`,
-              })
-            }
-            required
+            onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  date: `${e.target.value}T${getTimePart()}`,
+                });
+                clearError('date'); 
+              }}
+              error={errors.date}
           />
           <Input
             label="Hora"
+            name="time"
             type="time"
             value={getTimePart()}
-            onChange={(e) =>
+            onChange={(e) =>{
               setFormData({
                 ...formData,
                 date: `${getDatePart()}T${e.target.value}`,
               })
-            }
-            required
+              clearError('date');
+            }}
+            error={errors.date}
           />
         </div>
 
@@ -147,7 +169,7 @@ const EventForm = ({
           value={formData.location}
           placeholder="Dirección o lugar del evento"
           onChange={handleChange}
-          required
+          error={errors.location}
         />
 
         <div className="space-y-1">
@@ -172,15 +194,19 @@ const EventForm = ({
         </div>
 
         <div className="space-y-1">
-          <label className="block text-sm font-semibold text-gray-700">
+          <label htmlFor="image-upload" className="block text-sm font-semibold text-gray-700">
             Imagen del Evento
           </label>
           <input
+            id="image-upload"
             type="file"
             accept="image/*"
             onChange={handleFileChange}
             className={`${selectFileClasses} file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer`}
           />
+          {errors.image && (
+            <p className="text-red-500 text-xs mt-1 font-medium">{errors.image}</p>
+          )}
           
           {(preview || formData.imageUrl) && (
             <div className="mt-4">
@@ -206,7 +232,7 @@ const EventForm = ({
           value={formData.description}
           onChange={handleChange}
           rows={4}
-          required
+          error={errors.description}
         />
 
         <Button

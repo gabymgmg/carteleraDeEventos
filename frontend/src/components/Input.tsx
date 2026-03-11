@@ -5,23 +5,32 @@ type CombinedElementProps = React.InputHTMLAttributes<HTMLInputElement> &
 
 interface InputProps extends CombinedElementProps {
   label: string;
+  error?: string;
   isTextArea?: boolean;
 }
 
-const Input = ({ label, isTextArea, className, ...props }: InputProps) => {
-  const baseClasses =
-    'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-300 outline-none transition-all text-sm placeholder:text-gray-400 disabled:bg-gray-100 disabled:text-gray-500';
+const Input = ({ label, isTextArea, className, error, ...props }: InputProps) => {
+  const inputId = props.name
+  const baseClasses = `w-full px-3 py-2 border rounded-lg outline-none transition-all text-sm ${
+    error ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-500'
+  }`;
 
   return (
     <div className="space-y-1 w-full">
-      <label className="block text-sm font-semibold text-gray-700">
+      <label htmlFor={inputId} className="block text-sm font-semibold text-gray-700">
         {label}
       </label>
 
       {isTextArea ? (
-        <textarea className={`${baseClasses} ${className || ''}`} {...props} />
+        <textarea id={inputId} className={`${baseClasses} ${className || ''}`} {...props} />
       ) : (
-        <input className={`${baseClasses} ${className || ''}`} {...props} />
+        <input id={inputId} className={`${baseClasses} ${className || ''}`} {...props} />
+      )}
+
+      {error && (
+        <p className="text-red-500 text-xs mt-1 font-medium animate-in fade-in slide-in-from-top-1">
+          {error}
+        </p>
       )}
     </div>
   );

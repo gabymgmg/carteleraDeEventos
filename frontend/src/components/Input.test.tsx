@@ -4,7 +4,9 @@ import Input from './Input';
 
 describe('Input Component', () => {
   it('it should render label correctly', () => {
-    render(<Input label="Nombre del Evento" name="title" onChange={() => {}} />);
+    render(
+      <Input label="Nombre del Evento" name="title" onChange={() => {}} />
+    );
     expect(screen.getByText('Nombre del Evento')).toBeInTheDocument();
   });
 
@@ -23,8 +25,15 @@ describe('Input Component', () => {
   });
 
   it('it should show the correct values from the props', () => {
-    render(<Input label="Ubicación" name="location" value="Estadio Único" onChange={() => {}} />);
+    render(
+      <Input
+        label="Ubicación"
+        name="location"
+        value="Estadio Único"
+        onChange={() => {}}
+      />
+    );
     const InputElement = screen.getByLabelText('Ubicación') as HTMLInputElement;
     expect(InputElement.value).toBe('Estadio Único');
-  })
-})
+  });
+});

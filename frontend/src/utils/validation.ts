@@ -1,15 +1,19 @@
-import type {Event} from '../types/event';
+import type { Event } from '../types/event';
 
 export const validatePassword = (
   password: string,
   confirm: string
 ): string | null => {
-  if (password.length < 6) return 'Password must be at least 6 characters long';
-  if (password !== confirm) return 'Passwords do not match';
+  if (password.length < 6)
+    return 'La contraseña debe tener al menos 6 caracteres';
+  if (password !== confirm) return 'Las contraseñas no coinciden';
   return null; // No errors
 };
 
-export const validateEvent = (formData: Event, file: File | null): Record<string, string> => {
+export const validateEvent = (
+  formData: Event,
+  file: File | null
+): Record<string, string> => {
   const newErrors: Record<string, string> = {};
 
   if (!formData.title.trim()) {
@@ -20,11 +24,12 @@ export const validateEvent = (formData: Event, file: File | null): Record<string
     newErrors.location = 'La ubicación es necesaria';
   }
   // Date validation: Must be a valid date and not in the past
-  if (!formData.date || formData.date.includes('undefined')) {
-    newErrors.date = 'Debes seleccionar una fecha y hora';
+  const datePart = formData.date.split('T')[0];
+  if (!datePart || datePart === '') {
+    newErrors.date = 'Debes seleccionar una fecha';
   } else {
     const selectedDate = new Date(formData.date);
-    if(selectedDate < new Date()) {
+    if (selectedDate < new Date()) {
       newErrors.date = 'La fecha no puede ser anterior al momento actual';
     }
   }
@@ -38,5 +43,5 @@ export const validateEvent = (formData: Event, file: File | null): Record<string
     newErrors.description = 'La descripción es necesaria';
   }
 
-  return newErrors; 
+  return newErrors;
 };

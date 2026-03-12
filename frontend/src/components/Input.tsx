@@ -9,22 +9,41 @@ interface InputProps extends CombinedElementProps {
   isTextArea?: boolean;
 }
 
-const Input = ({ label, isTextArea, className, error, ...props }: InputProps) => {
-  const inputId = props.name
+const Input = ({
+  label,
+  isTextArea,
+  className,
+  error,
+  ...props
+}: InputProps) => {
+  const inputId = props.name;
   const baseClasses = `w-full px-3 py-2 border rounded-lg outline-none transition-all text-sm ${
-    error ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-500'
+    error
+      ? 'border-red-500 focus:ring-red-200'
+      : 'border-gray-300 focus:ring-blue-500'
   }`;
 
   return (
     <div className="space-y-1 w-full">
-      <label htmlFor={inputId} className="block text-sm font-semibold text-gray-700">
+      <label
+        htmlFor={inputId}
+        className="block text-sm font-semibold text-gray-700"
+      >
         {label}
       </label>
 
       {isTextArea ? (
-        <textarea id={inputId} className={`${baseClasses} ${className || ''}`} {...props} />
+        <textarea
+          id={inputId}
+          className={`${baseClasses} ${className || ''}`}
+          {...props}
+        />
       ) : (
-        <input id={inputId} className={`${baseClasses} ${className || ''}`} {...props} />
+        <input
+          id={inputId}
+          className={`${baseClasses} ${className || ''}`}
+          {...props}
+        />
       )}
 
       {error && (

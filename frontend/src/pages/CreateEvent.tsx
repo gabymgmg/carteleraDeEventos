@@ -21,7 +21,7 @@ const CreateEvent = () => {
     formDataToSend.append('location', data.location);
     formDataToSend.append('category', data.category || 'Concierto'); // Valor por defecto si no se selecciona categoría
 
-    // 2. Agregamos el archivo 
+    // 2. Agregamos el archivo
     if (data.imageFile instanceof File) {
       formDataToSend.append('image', data.imageFile);
     } else {

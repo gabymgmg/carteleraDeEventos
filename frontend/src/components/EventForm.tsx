@@ -68,11 +68,13 @@ const EventForm = ({
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
 
-    // Actualiza el valor del formulario 
+    // Actualiza el valor del formulario
     setFormData({ ...formData, [name]: value });
 
     // Si había un error para este campo, se borra
@@ -89,7 +91,8 @@ const EventForm = ({
       }
 
       setFile(selectedFile);
-      
+      clearError('image');
+
       // Creamos la nueva URL y la guardamos en el estado
       const objectUrl = URL.createObjectURL(selectedFile);
       setPreview(objectUrl);
@@ -106,10 +109,8 @@ const EventForm = ({
     }
     setErrors({}); // Clear any previous errors if validation passes
     onSubmit({ ...formData, imageFile: file } as any);
-
+    console.log(errors);
   };
-
-  
 
   return (
     <div className="max-w-2xl mx-auto p-4">
@@ -138,27 +139,25 @@ const EventForm = ({
             type="date"
             value={getDatePart()}
             onChange={(e) => {
-                setFormData({
-                  ...formData,
-                  date: `${e.target.value}T${getTimePart()}`,
-                });
-                clearError('date'); 
-              }}
-              error={errors.date}
+              setFormData({
+                ...formData,
+                date: `${e.target.value}T${getTimePart()}`,
+              });
+              clearError('date');
+            }}
+            error={errors.date}
           />
           <Input
             label="Hora"
             name="time"
             type="time"
             value={getTimePart()}
-            onChange={(e) =>{
+            onChange={(e) => {
               setFormData({
                 ...formData,
                 date: `${getDatePart()}T${e.target.value}`,
-              })
-              clearError('date');
+              });
             }}
-            error={errors.date}
           />
         </div>
 
@@ -194,7 +193,10 @@ const EventForm = ({
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="image-upload" className="block text-sm font-semibold text-gray-700">
+          <label
+            htmlFor="image-upload"
+            className="block text-sm font-semibold text-gray-700"
+          >
             Imagen del Evento
           </label>
           <input
@@ -205,9 +207,11 @@ const EventForm = ({
             className={`${selectFileClasses} file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer`}
           />
           {errors.image && (
-            <p className="text-red-500 text-xs mt-1 font-medium">{errors.image}</p>
+            <p className="text-red-500 text-xs mt-1 font-medium">
+              {errors.image}
+            </p>
           )}
-          
+
           {(preview || formData.imageUrl) && (
             <div className="mt-4">
               <label className="block text-sm font-semibold text-gray-700 mb-2">

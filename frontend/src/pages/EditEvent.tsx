@@ -44,7 +44,7 @@ const EditEvent = () => {
     // Image
     if (data.imageFile instanceof File) {
       formDataToSend.append('image', data.imageFile);
-    } 
+    }
     try {
       await api.put(`/events/${id}`, formDataToSend);
       navigate('/dashboard');

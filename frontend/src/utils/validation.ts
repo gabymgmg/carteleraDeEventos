@@ -15,7 +15,10 @@ export const validateEvent = (
   file: File | null
 ): Record<string, string> => {
   const newErrors: Record<string, string> = {};
-
+  const selectedDate = new Date(formData.date);
+  const now = new Date();
+  const datePart = formData.date.split('T')[0];
+  
   if (!formData.title.trim()) {
     newErrors.title = 'Debes ingresar un título para el evento';
   }
@@ -24,13 +27,15 @@ export const validateEvent = (
     newErrors.location = 'La ubicación es necesaria';
   }
   // Date validation: Must be a valid date and not in the past
-  const datePart = formData.date.split('T')[0];
-  if (!datePart || datePart === '') {
-    newErrors.date = 'Debes seleccionar una fecha';
-  } else {
-    const selectedDate = new Date(formData.date);
-    if (selectedDate < new Date()) {
+  if (!datePart || datePart === '' || formData.date.includes('undefined')) {
+  newErrors.date = 'Debes seleccionar una fecha';
+  } 
+  // if there's a date, we check if time is in the past
+  else if (selectedDate < now) {
+    if (selectedDate.toDateString() !== now.toDateString()) {
       newErrors.date = 'La fecha no puede ser anterior al momento actual';
+    } else {
+      newErrors.date = 'La hora seleccionada ya ha pasado';
     }
   }
 

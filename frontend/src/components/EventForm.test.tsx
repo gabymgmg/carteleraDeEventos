@@ -215,4 +215,38 @@ describe('EventForm Component', () => {
       'Un gran concierto para cerrar el año.'
     );
   });
+
+  it('should show error when selected time is in the past', () => {
+    const mockHandleSubmit = vi.fn();
+    render(
+      <MemoryRouter>
+        <EventForm
+          buttonText="Crear Evento"
+          loading={false}
+          onSubmit={mockHandleSubmit}
+        />
+      </MemoryRouter>
+    );
+    // 
+  const now = new Date();
+  // Forzamos una hora exacta de hace una hora, sin segundos
+  const pastDate = new Date(now.getTime() - 60 * 60 * 1000);
+  pastDate.setSeconds(0);
+  pastDate.setMilliseconds(0);
+
+  const datePart = pastDate.toISOString().split('T')[0];
+  const timePart = pastDate.toLocaleTimeString('en-GB', { 
+    hour: '2-digit', 
+    minute: '2-digit' 
+  });
+
+  fireEvent.change(screen.getByLabelText(/Fecha/i), { target: { value: datePart } });
+  fireEvent.change(screen.getByLabelText(/Hora/i), { target: { value: timePart } });
+
+  fireEvent.click(screen.getByText(/Crear Evento/i))
+    expect(mockHandleSubmit).not.toHaveBeenCalled();
+    expect(
+      screen.getByText(/La hora seleccionada ya ha pasado/i)
+    ).toBeInTheDocument();
+  });
 });

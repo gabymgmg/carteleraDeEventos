@@ -157,6 +157,7 @@ const EventForm = ({
                 ...formData,
                 date: `${getDatePart()}T${e.target.value}`,
               });
+              clearError('date');
             }}
           />
         </div>

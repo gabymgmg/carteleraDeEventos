@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem('user', JSON.stringify(profile));
       setUser(profile);
       // Redirect based on role
-      if (profile.role === 'admin') navigate('admin/dashboard');
+      if (profile.role === 'admin') navigate('/admin/dashboard');
       else navigate('/dashboard');
     },
     [navigate]

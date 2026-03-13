@@ -1,10 +1,19 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import EventForm from './EventForm';
 import type { Event } from '../types/event';
 
 describe('EventForm Component', () => {
+  beforeEach(() => {
+    global.URL.createObjectURL = vi.fn(() => 'mock-url-para-preview');
+    global.URL.revokeObjectURL = vi.fn();
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+  
   it('renders form fields correctly', () => {
     render(
       <MemoryRouter>

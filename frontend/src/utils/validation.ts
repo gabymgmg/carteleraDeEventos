@@ -18,7 +18,7 @@ export const validateEvent = (
   const selectedDate = new Date(formData.date);
   const now = new Date();
   const datePart = formData.date.split('T')[0];
-  
+
   if (!formData.title.trim()) {
     newErrors.title = 'Debes ingresar un título para el evento';
   }
@@ -28,8 +28,8 @@ export const validateEvent = (
   }
   // Date validation: Must be a valid date and not in the past
   if (!datePart || datePart === '' || formData.date.includes('undefined')) {
-  newErrors.date = 'Debes seleccionar una fecha';
-  } 
+    newErrors.date = 'Debes seleccionar una fecha';
+  }
   // if there's a date, we check if time is in the past
   else if (selectedDate < now) {
     if (selectedDate.toDateString() !== now.toDateString()) {

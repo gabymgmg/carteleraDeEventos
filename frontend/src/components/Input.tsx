@@ -16,7 +16,8 @@ const Input = ({
   error,
   ...props
 }: InputProps) => {
-  const inputId = props.name;
+  const inputId =
+    props.id || props.name || label.toLowerCase().replace(/\s+/g, '-');
   const baseClasses = `w-full px-3 py-2 border rounded-lg outline-none transition-all text-sm ${
     error
       ? 'border-red-500 focus:ring-red-200'

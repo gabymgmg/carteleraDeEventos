@@ -4,23 +4,6 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { AuthProvider } from '../context/AuthProvider';
 import LoginPage from './LoginPage';
 import api from '../api/axios';
-// Mocking the relative route of axios instace
-vi.mock('../api/axios', () => {
-  // Defining the object outside the return and then passing it to default ensures
-  // that Vitest maintains the reference.
-  const mockApi = {
-    get: vi.fn(),
-    post: vi.fn(),
-    interceptors: {
-      request: { use: vi.fn(), eject: vi.fn() },
-      response: { use: vi.fn(), eject: vi.fn() },
-    },
-  };
-  return {
-    default: mockApi,
-    ...mockApi,
-  };
-});
 
 describe('Login Page', () => {
   beforeEach(() => {

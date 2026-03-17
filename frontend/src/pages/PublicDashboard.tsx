@@ -68,6 +68,7 @@ const PublicDashboard = () => {
       {/* Barra de Búsqueda y Filtros Avanzados */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10 items-end bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <Input
+          name="search"
           label="¿Qué buscas?"
           placeholder="Ej: Rock, Jazz..."
           value={search}
@@ -76,6 +77,7 @@ const PublicDashboard = () => {
         />
 
         <Input
+          name="location"
           label="¿Dónde?"
           placeholder="Ciudad..."
           value={location}
@@ -83,6 +85,7 @@ const PublicDashboard = () => {
         />
 
         <Input
+          name="date"
           label="¿Cuándo?"
           type="date"
           value={date}

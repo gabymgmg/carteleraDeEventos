@@ -116,4 +116,21 @@ describe('PublicDashboard Page', () => {
       expect(api.get).toHaveBeenCalledWith('/events?');
     });
   });
+
+ it('should handle API errors show empty state', async () => {
+  vi.mocked(api.get).mockRejectedValue(new Error('Internal Server Error'));
+
+  render(
+    <MemoryRouter>
+      <PublicDashboard />
+    </MemoryRouter>
+  );
+
+  await waitFor(() => {
+    expect(screen.getByText(/No hay eventos que coincidan con tu búsqueda/i)).toBeInTheDocument();
+  });
+
+  const eventCards = screen.queryAllByText(/Ver Detalles/i);
+  expect(eventCards).toHaveLength(0);
+});
 });

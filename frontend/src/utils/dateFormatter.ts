@@ -12,13 +12,16 @@ export const formatDateForInput = (dateString: string) => {
 
 // For display (EventCard)
 export const formatDateDisplay = (dateString: string) => {
-  if (!dateString) return '';
+  if (!dateString) return 'Fecha no disponible';
   const date = new Date(dateString);
-  return date.toLocaleDateString('es-ES', {
+  if (isNaN(date.getTime())) return 'Fecha no disponible';
+
+  return new Intl.DateTimeFormat('es-ES', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-  });
+    hour12: false,
+  }).format(date);
 };

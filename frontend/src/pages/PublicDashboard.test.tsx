@@ -3,20 +3,25 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import PublicDashboard from './PublicDashboard';
 import api from '../api/axios';
+import type { Event } from '../types/event';
 
 describe('PublicDashboard Page', () => {
-  const mockEvents = [
+  const mockEvents: Event[] = [
     {
       _id: '1',
       title: 'Concierto Rock',
       category: 'Concierto',
       location: 'Carabobo',
+      description: 'Testing',
+      date: '2026-06-20T20:00:00Z',
     },
     {
       _id: '2',
       title: 'Feria Gastronómica',
       category: 'Feria',
       location: 'Valencia',
+      description: 'Testing',
+      date: '2026-07-20T20:00:00Z',
     },
   ];
 
@@ -117,20 +122,22 @@ describe('PublicDashboard Page', () => {
     });
   });
 
- it('should handle API errors show empty state', async () => {
-  vi.mocked(api.get).mockRejectedValue(new Error('Internal Server Error'));
+  it('should handle API errors show empty state', async () => {
+    vi.mocked(api.get).mockRejectedValue(new Error('Internal Server Error'));
 
-  render(
-    <MemoryRouter>
-      <PublicDashboard />
-    </MemoryRouter>
-  );
+    render(
+      <MemoryRouter>
+        <PublicDashboard />
+      </MemoryRouter>
+    );
 
-  await waitFor(() => {
-    expect(screen.getByText(/No hay eventos que coincidan con tu búsqueda/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByText(/No hay eventos que coincidan con tu búsqueda/i)
+      ).toBeInTheDocument();
+    });
+
+    const eventCards = screen.queryAllByText(/Ver Detalles/i);
+    expect(eventCards).toHaveLength(0);
   });
-
-  const eventCards = screen.queryAllByText(/Ver Detalles/i);
-  expect(eventCards).toHaveLength(0);
-});
 });

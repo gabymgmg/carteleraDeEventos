@@ -25,6 +25,8 @@ const CreateEvent = () => {
     if (data.imageFile instanceof File) {
       formDataToSend.append('image', data.imageFile);
     } else {
+      setError('Por favor, selecciona una imagen válida para el evento.');
+      setLoading(false);
       console.error('Error: El archivo no es una instancia de File válida.');
     }
 

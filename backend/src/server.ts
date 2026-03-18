@@ -9,14 +9,24 @@ import userRoutes from './routes/userRoutes';
 import eventRoutes from './routes/eventRoutes';
 
 const app: Application = express();
-
+const allowedOrigins = [
+  'http://localhost:5173', // Local Dev
+  process.env.FRONTEND_URL  // Vercel URL
+];
 // Connect to DB
 connectDB();
 
 // Middleware
 app.use(
   cors({
-    origin: 'http://localhost:5173', // Frontend URL
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        return callback(new Error('CORS policy: This origin is not allowed'), false);
+      }
+      return callback(null, true);
+    },
     credentials: true,
   })
 );

@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import api from '../api/axios';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { validatePassword } from '../utils/validation';
 import Input from '../components/Input';
 import Button from '../components/Buttons';
 
 const ChangePassword = () => {
-  const navigate = useNavigate();
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { logout } = useAuth();

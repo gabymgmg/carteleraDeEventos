@@ -1,7 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useLocation, Route, Routes, MemoryRouter } from 'react-router-dom';
-import { AuthContext } from './AuthContext';
 import { AuthProvider } from './AuthProvider';
 import type { User } from '../types/user';
 import { useAuth } from '../hooks/useAuth';

@@ -14,25 +14,27 @@ const CreateEvent = () => {
     setLoading(true);
     const formDataToSend = new FormData();
 
-    // Add content
+    // 1. Agregamos los textos
     formDataToSend.append('title', data.title);
     formDataToSend.append('description', data.description);
     formDataToSend.append('date', data.date);
     formDataToSend.append('location', data.location);
-    formDataToSend.append('category', data.category || 'Concierto');
-    // 'image should match with name configured in uplpoadCloud.single
-    if (data.imageFile) {
+    formDataToSend.append('category', data.category || 'Concierto'); // Valor por defecto si no se selecciona categoría
+
+    // 2. Agregamos el archivo
+    if (data.imageFile instanceof File) {
       formDataToSend.append('image', data.imageFile);
+    } else {
+      setError('Por favor, selecciona una imagen válida para el evento.');
+      setLoading(false);
+      console.error('Error: El archivo no es una instancia de File válida.');
     }
 
     try {
-      await api.post('/events', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await api.post('/events', formDataToSend);
       navigate('/dashboard');
     } catch (err) {
+      console.error('Error en la petición:', err);
       setError('Error al crear el evento');
     } finally {
       setLoading(false);

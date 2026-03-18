@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import type { Event } from '../types/event';
 import Button from '../components/Buttons';
+import { formatDateDisplay } from '../utils/dateFormatter';
 
 const EventDetail = () => {
   const { id } = useParams();
@@ -69,7 +70,7 @@ const EventDetail = () => {
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600">
             <div className="flex items-center gap-2">
               <span className="font-bold">📅 Fecha:</span>
-              {new Date(event.date).toLocaleString()}
+              {formatDateDisplay(event.date)}
             </div>
             <div className="flex items-center gap-2">
               <span className="font-bold">📍 Ubicación:</span>

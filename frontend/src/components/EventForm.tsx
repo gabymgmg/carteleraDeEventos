@@ -3,6 +3,7 @@ import type { Event } from '../types/event';
 import { formatDateForInput } from '../utils/dateFormatter';
 import Input from './Input';
 import Button from './Buttons';
+import { validateEvent } from '../utils/validation';
 
 interface EventFormProps {
   initialData?: Event;
@@ -28,12 +29,13 @@ const EventForm = ({
 
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const selectFileClasses =
     'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm bg-white';
 
+  // Efecto para cargar datos iniciales (Edit Mode)
   useEffect(() => {
     if (initialData) {
-      // Convert date from DB to local ISO format for input
       setFormData({
         ...initialData,
         date: initialData.date ? formatDateForInput(initialData.date) : '',
@@ -41,33 +43,73 @@ const EventForm = ({
     }
   }, [initialData]);
 
-  // Helper functions to split date and time for the form inputs
+  // EFECTO DE LIMPIEZA: Libera la memoria de la URL cuando el componente se destruye
+  useEffect(() => {
+    return () => {
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
+
   const getDatePart = () => formData.date.split('T')[0] || '';
   const getTimePart = () =>
     formData.date.split('T')[1]?.substring(0, 5) || '12:00';
+
+  const clearError = (name: string) => {
+    if (errors[name]) {
+      setErrors((prev) => {
+        // Creamos una copia de los errores actuales (prev) para no romper el estado original
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Actualiza el valor del formulario
+    setFormData({ ...formData, [name]: value });
+
+    // Si había un error para este campo, se borra
+    clearError(name);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
-      setFile(selectedFile);
-      // Clean up previous preview URL if exists
-      if (preview) URL.revokeObjectURL(preview);
+    const selectedFile = e.target.files?.[0];
 
-      setPreview(URL.createObjectURL(selectedFile)); // Generates local preview
+    if (selectedFile) {
+      // Si ya había una previsualización anterior, liberamos su memoria
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+
+      setFile(selectedFile);
+      clearError('image');
+
+      // Creamos la nueva URL y la guardamos en el estado
+      const objectUrl = URL.createObjectURL(selectedFile);
+      setPreview(objectUrl);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const validationErrors = validateEvent(formData, file);
+    // If there are validation errors, we set them in state and stop the submission
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({}); // Clear any previous errors if validation passes
     onSubmit({ ...formData, imageFile: file } as any);
+    console.log(errors);
   };
 
   return (
@@ -87,35 +129,39 @@ const EventForm = ({
           name="title"
           value={formData.title}
           onChange={handleChange}
-          required
+          error={errors.title}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             label="Fecha"
+            name="date"
             type="date"
             value={getDatePart()}
-            onChange={(e) =>
+            onChange={(e) => {
               setFormData({
                 ...formData,
                 date: `${e.target.value}T${getTimePart()}`,
-              })
-            }
-            required
+              });
+              clearError('date');
+            }}
+            error={errors.date}
           />
           <Input
             label="Hora"
+            name="time"
             type="time"
             value={getTimePart()}
-            onChange={(e) =>
+            onChange={(e) => {
               setFormData({
                 ...formData,
                 date: `${getDatePart()}T${e.target.value}`,
-              })
-            }
-            required
+              });
+              clearError('date');
+            }}
           />
         </div>
+
         <Input
           label="Ubicación"
           type="text"
@@ -123,7 +169,7 @@ const EventForm = ({
           value={formData.location}
           placeholder="Dirección o lugar del evento"
           onChange={handleChange}
-          required
+          error={errors.location}
         />
 
         <div className="space-y-1">
@@ -148,27 +194,37 @@ const EventForm = ({
         </div>
 
         <div className="space-y-1">
-          <label className="block text-sm font-semibold text-gray-700">
+          <label
+            htmlFor="image-upload"
+            className="block text-sm font-semibold text-gray-700"
+          >
             Imagen del Evento
           </label>
           <input
+            id="image-upload"
             type="file"
             accept="image/*"
-            name="imageUrl"
-            //value={formData.imageUrl || ''}
             onChange={handleFileChange}
             className={`${selectFileClasses} file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer`}
-            placeholder="https://ejemplo.com/imagen.jpg"
           />
-          {/* show the preview if exists or the actual image if editing */}
+          {errors.image && (
+            <p className="text-red-500 text-xs mt-1 font-medium">
+              {errors.image}
+            </p>
+          )}
+
           {(preview || formData.imageUrl) && (
-            <div className="mt-4 relative group">
-              <img
-                src={preview || formData.imageUrl}
-                alt="Preview"
-                className="h-48 w-full object-cover rounded-xl border-2 border-dashed border-gray-200"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-0 transition-all rounded-xl" />
+            <div className="mt-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Vista previa de la imagen
+              </label>
+              <div className="rounded-xl border-2 border-gray-200 overflow-hidden shadow-inner bg-gray-50">
+                <img
+                  src={preview || formData.imageUrl}
+                  alt="Preview"
+                  className="h-64 w-full object-contain"
+                />
+              </div>
             </div>
           )}
         </div>
@@ -181,7 +237,7 @@ const EventForm = ({
           value={formData.description}
           onChange={handleChange}
           rows={4}
-          required
+          error={errors.description}
         />
 
         <Button

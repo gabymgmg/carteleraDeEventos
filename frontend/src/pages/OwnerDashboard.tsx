@@ -9,6 +9,7 @@ const OwnerDashboard = () => {
   const { user } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -17,7 +18,7 @@ const OwnerDashboard = () => {
         if (data && Array.isArray(data)) setEvents(data);
       } catch (error) {
         console.error('Error fetching events:', error);
-        setEvents([]);
+        setError('No pudimos cargar tus eventos.');
       } finally {
         setLoading(false);
       }
@@ -35,6 +36,9 @@ const OwnerDashboard = () => {
       }
     }
   };
+
+  if (loading) return <p>Cargando eventos...</p>;
+  if (error) return <div className="text-red-500">{error}</div>;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -87,7 +91,11 @@ const OwnerDashboard = () => {
           <p className="text-gray-500 mb-6 text-lg">
             Aún no has publicado ningún evento.
           </p>
-          <Button to="/create-event" variant="primary">
+          <Button
+            to="/create-event"
+            variant="primary"
+            className="w-fit mx-auto"
+          >
             Publicar mi primer evento
           </Button>
         </div>

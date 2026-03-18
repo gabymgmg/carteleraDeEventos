@@ -1,0 +1,32 @@
+name: Frontend CI
+
+on:
+  pull_request:
+    branches: [ main, master ] # Runs whenever you target these branches
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4 
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: ./frontend 
+
+      - name: Run Tests
+        run: npm test -- --run # Runs Vitest once and exits
+        working-directory: ./frontend
+
+      - name: Build Project
+        run: npm run build
+        working-directory: ./frontend

@@ -5,7 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import type { Event } from '../types/event';
 import EventForm from '../components/EventForm';
 
-const EditEvent = () => {
+interface EditEventProps {
+  onEventUpdated?: () => void; // Callback para notificar al padre que se actualizó un evento
+}
+
+const EditEvent = ({ onEventUpdated }: EditEventProps) => {
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -47,6 +51,7 @@ const EditEvent = () => {
     }
     try {
       await api.put(`/events/${id}`, formDataToSend);
+      onEventUpdated?.();
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al actualizar el evento');

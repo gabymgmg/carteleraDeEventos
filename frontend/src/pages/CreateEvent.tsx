@@ -4,7 +4,11 @@ import api from '../api/axios';
 import EventForm from '../components/EventForm';
 import type { Event } from '../types/event';
 
-const CreateEvent = () => {
+interface CreateEventProps {
+  onEventCreated?: () => void; // Callback para notificar al padre que se creó un evento
+}
+
+const CreateEvent = ({ onEventCreated }: CreateEventProps) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -32,6 +36,7 @@ const CreateEvent = () => {
 
     try {
       await api.post('/events', formDataToSend);
+      onEventCreated?.(); // Notificamos al padre que se creó un evento
       navigate('/dashboard');
     } catch (err) {
       console.error('Error en la petición:', err);

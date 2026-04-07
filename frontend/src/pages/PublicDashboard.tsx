@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react';
-import api from '../api/axios';
 import type { Event } from '../types/event';
 import { useSearchParams } from 'react-router-dom';
 import EventCard from '../components/EventCard';
 import Input from '../components/Input';
 import Button from '../components/Buttons';
 
-const PublicDashboard = () => {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
+interface PublicDashboardProps {
+  allEvents: Event[];
+  loading: boolean;
+}
+
+const PublicDashboard = ({ allEvents, loading }: PublicDashboardProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Obtenemos los valores actuales de la URL
@@ -17,22 +18,20 @@ const PublicDashboard = () => {
   const location = searchParams.get('location') || '';
   const date = searchParams.get('date') || '';
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      setLoading(true);
-      try {
-        const { data } = await api.get(`/events?${searchParams.toString()}`);
-        setEvents(data);
-      } catch (error) {
-        console.error('Error fetching events:', error);
-        setEvents([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Filtramos lo que tenemos en memoria según los parámetros de búsqueda
+  const filteredEvents = allEvents.filter((event) => {
+    const matchesCategory = !category || event.category === category;
+    const matchesSearch =
+      !search || event.title.toLowerCase().includes(search.toLowerCase());
+    const matchesLocation =
+      !location ||
+      event.location.toLowerCase().includes(location.toLowerCase());
 
-    fetchEvents();
-  }, [searchParams]); // Se ejecuta cada vez que la URL cambia
+    // Comparación simple de fecha (YYYY-MM-DD)
+    const matchesDate = !date || event.date.startsWith(date);
+
+    return matchesCategory && matchesSearch && matchesLocation && matchesDate;
+  });
 
   // Función para actualizar los filtros en la URL
   const updateFilter = (key: string, value: string) => {
@@ -44,6 +43,14 @@ const PublicDashboard = () => {
     }
     setSearchParams(newParams);
   };
+
+  if (loading && allEvents.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -107,26 +114,19 @@ const PublicDashboard = () => {
         </div>
       </div>
 
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      ) : events.length === 0 ? (
+      {/* Renderizado de resultados filtrados */}
+      {filteredEvents.length === 0 ? (
         <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
           <p className="text-gray-500 text-lg mb-4">
-            No hay eventos que coincidan con tu búsqueda.
+            No hay eventos que coincidan.
           </p>
-          <Button
-            onClick={() => setSearchParams({})}
-            variant="secondary"
-            className="w-fit mx-auto"
-          >
-            Ver todos los eventos
+          <Button onClick={() => setSearchParams({})} variant="secondary">
+            Ver todos
           </Button>
         </div>
       ) : (
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {events.map((event) => (
+          {filteredEvents.map((event) => (
             <EventCard
               key={event._id}
               event={event}

@@ -1,8 +1,7 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import PublicDashboard from './PublicDashboard';
-import api from '../api/axios';
 import type { Event } from '../types/event';
 
 describe('PublicDashboard Page', () => {
@@ -25,119 +24,70 @@ describe('PublicDashboard Page', () => {
     },
   ];
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('should load and show available events', async () => {
-    vi.mocked(api.get).mockResolvedValue({ data: mockEvents });
-
+  it('should show available events from props', () => {
     render(
       <MemoryRouter>
-        <PublicDashboard />
+        <PublicDashboard allEvents={mockEvents} loading={false} />
       </MemoryRouter>
     );
 
-    // verify that api calls without any filters at first
-    expect(api.get).toHaveBeenCalledWith(expect.stringMatching(/\/events\??/));
-    // Waiting for cards to show
-    const eventCards = await screen.findAllByText(/Ver Detalles/i);
-    expect(eventCards).toHaveLength(2);
     expect(screen.getByText('Concierto Rock')).toBeInTheDocument();
+    expect(screen.getByText('Feria Gastronómica')).toBeInTheDocument();
   });
 
-  it('should update URL and call API when filtering by category', async () => {
-    vi.mocked(api.get).mockResolvedValue({ data: [mockEvents[0]] });
-
+  it('should filter events when clicking a category', async () => {
     render(
       <MemoryRouter>
-        <PublicDashboard />
+        <PublicDashboard allEvents={mockEvents} loading={false} />
       </MemoryRouter>
     );
 
     const conciertoBtn = screen.getByRole('button', { name: /^Concierto$/i });
     fireEvent.click(conciertoBtn);
 
-    // Verifying that the api gets called with concert category filter
-    await waitFor(() => {
-      expect(api.get).toHaveBeenCalledWith(
-        expect.stringContaining('category=Concierto')
-      );
-    });
+    expect(screen.getByText('Concierto Rock')).toBeInTheDocument();
+    expect(screen.queryByText('Feria Gastronómica')).not.toBeInTheDocument();
   });
 
-  it('should filter by text when user search', async () => {
-    vi.mocked(api.get).mockResolvedValue({ data: [] });
-
+  it('should filter by text when user search', () => {
     render(
       <MemoryRouter>
-        <PublicDashboard />
+        <PublicDashboard allEvents={mockEvents} loading={false} />
       </MemoryRouter>
     );
 
     const searchInput = screen.getByLabelText(/¿Qué buscas?/i);
-    fireEvent.change(searchInput, { target: { value: 'Jazz' } });
+    fireEvent.change(searchInput, { target: { value: 'Feria' } });
 
-    await waitFor(() => {
-      expect(api.get).toHaveBeenCalledWith(
-        expect.stringContaining('search=Jazz')
-      );
-    });
+    expect(screen.getByText('Feria Gastronómica')).toBeInTheDocument();
+    expect(screen.queryByText('Concierto Rock')).not.toBeInTheDocument();
   });
 
-  it('should show a message if there is no result', async () => {
-    vi.mocked(api.get).mockResolvedValue({ data: [] });
-
+  it('should show empty state if no events match', () => {
     render(
       <MemoryRouter>
-        <PublicDashboard />
+        <PublicDashboard allEvents={mockEvents} loading={false} />
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(
-        screen.getByText(/No hay eventos que coincidan con tu búsqueda/i)
-      ).toBeInTheDocument();
-    });
+    const searchInput = screen.getByLabelText(/¿Qué buscas?/i);
+    fireEvent.change(searchInput, { target: { value: 'Evento Inexistente' } });
+
+    expect(
+      screen.getByText(/No hay eventos que coincidan/i)
+    ).toBeInTheDocument();
   });
 
-  it('should clean filters when user clicks reset button', async () => {
-    vi.mocked(api.get).mockResolvedValue({ data: mockEvents });
-
-    render(
-      <MemoryRouter
-        initialEntries={['/dashboard?category=Concierto&search=Jazz']}
-      >
-        <PublicDashboard />
-      </MemoryRouter>
-    );
-
-    const clearBtn = screen.getByRole('button', { name: /Limpiar filtros/i });
-    expect(clearBtn).toBeInTheDocument();
-
-    fireEvent.click(clearBtn);
-
-    await waitFor(() => {
-      expect(api.get).toHaveBeenCalledWith('/events?');
-    });
-  });
-
-  it('should handle API errors show empty state', async () => {
-    vi.mocked(api.get).mockRejectedValue(new Error('Internal Server Error'));
-
+  it('should show spinner when loading is true', () => {
     render(
       <MemoryRouter>
-        <PublicDashboard />
+        <PublicDashboard allEvents={[]} loading={true} />
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(
-        screen.getByText(/No hay eventos que coincidan con tu búsqueda/i)
-      ).toBeInTheDocument();
-    });
-
-    const eventCards = screen.queryAllByText(/Ver Detalles/i);
-    expect(eventCards).toHaveLength(0);
+    const spinner = screen
+      .getByRole('main', { hidden: true })
+      .parentElement?.querySelector('.animate-spin');
+    expect(spinner).toBeInTheDocument();
   });
 });

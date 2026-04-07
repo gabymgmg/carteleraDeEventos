@@ -23,6 +23,6 @@ export const formatDateDisplay = (dateString: string) => {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
-    timeZone: 'UTC', // Ensure we treat the date as UTC
+    timeZone: 'UTC', // UTC for consistent display regardless of user's local timezone
   }).format(date);
 };

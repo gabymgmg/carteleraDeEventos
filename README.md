@@ -4,6 +4,11 @@
 
 A web application designed to manage, discover, and organize events. The platform features three user levels (Public, Owner, and Admin), allowing business owners to create events and users to search by category or location.
 
+<img width="1905" height="834" alt="image" src="https://github.com/user-attachments/assets/62ca70bf-610f-4b7a-abfd-014f4006bd9e" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/a908ad89-bdbf-4057-b30c-07495429bddd" />
+<img width="1898" height="781" alt="image" src="https://github.com/user-attachments/assets/61667327-da52-4bd0-bd9a-b01e012292ff" />
+
+
 
 ## 🚀 Key Features
 
@@ -19,10 +24,6 @@ A web application designed to manage, discover, and organize events. The platfor
   - **Public:** Browse and filter events without an account.
   - **Owners:** Private dashboard to create, edit (with image upload), and delete their own events.
   - **Admin:** Global management of the platform ecosystem.
-
-<img width="1920" height="1080" alt="Screenshot 2026-04-16 at 4 05 12 PM" src="https://github.com/user-attachments/assets/3413cb90-cce2-4e3e-9d4b-005f3ee0df0b" />
-<img width="1920" height="1080" alt="Screenshot 2026-04-16 at 4 05 34 PM" src="https://github.com/user-attachments/assets/083c16af-c68c-40ad-ba54-e7ce6b30d92a" />
-<img width="1920" height="1080" alt="Screenshot 2026-04-16 at 4 05 39 PM" src="https://github.com/user-attachments/assets/c62a9832-8eea-43b8-a738-294191dda29a" />
 
 ## 🛠️ Tech Stack
 

@@ -1,13 +1,12 @@
 # Full-Stack Event Management Platform (A project in progress)🎫
 
-[Live Demo]([https://your-vercel-link.vercel.app]) | [Backend API](https://backend-production-7285.up.railway.app/)
+[Live Demo](https://your-vercel-link.vercel.app) | [Backend API](https://backend-production-7285.up.railway.app/)
 
 A web application designed to manage, discover, and organize events. The platform features three user levels (Public, Owner, and Admin), allowing business owners to create events and users to search by category or location.
 
 <img width="1905" height="834" alt="image" src="https://github.com/user-attachments/assets/62ca70bf-610f-4b7a-abfd-014f4006bd9e" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/a908ad89-bdbf-4057-b30c-07495429bddd" />
 <img width="1898" height="781" alt="image" src="https://github.com/user-attachments/assets/61667327-da52-4bd0-bd9a-b01e012292ff" />
-
+<img width="1893" height="789" alt="image" src="https://github.com/user-attachments/assets/9b77e40b-ea72-414e-a7ba-f6ef9ffbabd9" />
 
 
 ## 🚀 Key Features

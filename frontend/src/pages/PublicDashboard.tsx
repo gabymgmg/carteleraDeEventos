@@ -115,7 +115,7 @@ const PublicDashboard = ({
       {/* Renderizado de resultados filtrados */}
       {loading && allEvents.length === 0 ? (
         // 1. if it's the first load and we don't have events yet, show the spinner
-        <Spinner message="Cargando eventos..." size='md' />
+        <Spinner message="Cargando eventos..." size="md" />
       ) : error ? (
         // 2. if we have an error, show the error message
         <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">

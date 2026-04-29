@@ -6,7 +6,7 @@ interface SpinnerProps {
 
 const Spinner = ({ message, size = 'md' }: SpinnerProps) => {
   const isSmall = size === 'sm';
-  const iconSize = isSmall ? "40" : "64";
+  const iconSize = isSmall ? '40' : '64';
 
   return (
     <div className="flex flex-col items-center justify-center gap-3">
@@ -20,16 +20,18 @@ const Spinner = ({ message, size = 'md' }: SpinnerProps) => {
         <circle
           cx={Number(iconSize) / 2}
           cy={Number(iconSize) / 2}
-          r={isSmall ? "15" : "24"}
+          r={isSmall ? '15' : '24'}
           stroke="#E5E7EB"
-          strokeWidth={isSmall ? "2" : "6"}
+          strokeWidth={isSmall ? '2' : '6'}
         />
         <path
-          d={isSmall 
-            ? "M13.6 6.3C17.2 4.6 21.4 4.4 25.1 5.8" 
-            : "M21.8 10.1C24.7 8.7 27.8 8 30.9 7.8"}
+          d={
+            isSmall
+              ? 'M13.6 6.3C17.2 4.6 21.4 4.4 25.1 5.8'
+              : 'M21.8 10.1C24.7 8.7 27.8 8 30.9 7.8'
+          }
           stroke="url(#spinner_gradient)"
-          strokeWidth={isSmall ? "2" : "6"}
+          strokeWidth={isSmall ? '2' : '6'}
           strokeLinecap="round"
         />
         <defs>
@@ -39,7 +41,9 @@ const Spinner = ({ message, size = 'md' }: SpinnerProps) => {
           </linearGradient>
         </defs>
       </svg>
-      {message && <span className="text-gray-500 text-sm animate-pulse">{message}</span>}
+      {message && (
+        <span className="text-gray-500 text-sm animate-pulse">{message}</span>
+      )}
     </div>
   );
 };

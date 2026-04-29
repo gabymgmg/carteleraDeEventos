@@ -43,9 +43,7 @@ function App() {
   }, []);
   // It executes only once
   useEffect(() => {
-    setTimeout(() => {
-      fetchEvents(); // Tu función real
-    }, 2000); // Esto fuerza una espera de 2 segundos
+    fetchEvents();
   }, [fetchEvents]);
 
   return (

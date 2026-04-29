@@ -34,8 +34,8 @@ const Spinner = ({ message, size = 'md' }: SpinnerProps) => {
         />
         <defs>
           <linearGradient id="spinner_gradient" x1="0" y1="0" x2="1" y2="1">
-            <stop stopColor="#4F46E5" />
-            <stop offset="1" stopColor="#8B5CF6" />
+            <stop stopColor="rgb(38, 127, 235)" />
+            <stop offset="1" stopColor="rgb(34, 36, 202)" />
           </linearGradient>
         </defs>
       </svg>

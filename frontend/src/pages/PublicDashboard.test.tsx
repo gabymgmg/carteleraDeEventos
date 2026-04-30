@@ -27,7 +27,7 @@ describe('PublicDashboard Page', () => {
   it('should show available events from props', () => {
     render(
       <MemoryRouter>
-        <PublicDashboard allEvents={mockEvents} loading={false} />
+        <PublicDashboard allEvents={mockEvents} loading={false} error={null} />
       </MemoryRouter>
     );
 
@@ -38,7 +38,7 @@ describe('PublicDashboard Page', () => {
   it('should filter events when clicking a category', async () => {
     render(
       <MemoryRouter>
-        <PublicDashboard allEvents={mockEvents} loading={false} />
+        <PublicDashboard allEvents={mockEvents} loading={false} error={null} />
       </MemoryRouter>
     );
 
@@ -52,7 +52,7 @@ describe('PublicDashboard Page', () => {
   it('should filter by text when user search', () => {
     render(
       <MemoryRouter>
-        <PublicDashboard allEvents={mockEvents} loading={false} />
+        <PublicDashboard allEvents={mockEvents} loading={false} error={null} />
       </MemoryRouter>
     );
 
@@ -66,7 +66,7 @@ describe('PublicDashboard Page', () => {
   it('should show empty state if no events match', () => {
     render(
       <MemoryRouter>
-        <PublicDashboard allEvents={mockEvents} loading={false} />
+        <PublicDashboard allEvents={mockEvents} loading={false} error={null} />
       </MemoryRouter>
     );
 
@@ -81,13 +81,23 @@ describe('PublicDashboard Page', () => {
   it('should show spinner when loading is true', () => {
     render(
       <MemoryRouter>
-        <PublicDashboard allEvents={[]} loading={true} />
+        <PublicDashboard allEvents={[]} loading={true} error={null} />
       </MemoryRouter>
     );
 
     const spinner = screen
-      .getByRole('main', { hidden: true })
-      .parentElement?.querySelector('.animate-spin');
+      .getByTestId('loading-spinner');
     expect(spinner).toBeInTheDocument();
+  });
+
+  it('should show error message if error prop is set', () => {
+    const errorMessage = 'Error al cargar eventos';
+    render(
+      <MemoryRouter>
+        <PublicDashboard allEvents={[]} loading={false} error={errorMessage} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(errorMessage)).toBeInTheDocument();
   });
 });

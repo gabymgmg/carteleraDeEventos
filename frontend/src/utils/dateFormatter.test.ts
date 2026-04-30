@@ -15,19 +15,13 @@ describe('dateFormatter Utility', () => {
     vi.useRealTimers();
   });
 
-  it('should show the time formatted according to the local timezone', () => {
+  it('should show the time formatted in UTC as per configuration', () => {
     const input = '2026-05-20T20:00:00Z';
     const result = formatDateDisplay(input);
 
+    // Verificamos que el formato es es-ES y que respeta el UTC
     expect(result).toContain('20/05/2026');
-
-    const expectedTime = new Intl.DateTimeFormat('es-ES', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    }).format(new Date(input));
-
-    expect(result).toContain(expectedTime);
+    expect(result).toContain('20:00');
   });
 
   it('should format an ISO string to a Spanish readable format', () => {

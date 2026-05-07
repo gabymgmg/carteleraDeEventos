@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import type { User } from '../types/user';
 import Button from '../components/Buttons';
+import Spinner from '../components/Spinner';
+import { Link } from 'react-router-dom';
 
 const UserProfile = () => {
   const [loading, setLoading] = useState(true);
@@ -23,12 +25,13 @@ const UserProfile = () => {
     fetchProfile();
   }, []);
 
-  if (loading)
+  if (loading) {
     return (
-      <div className="flex justify-center py-20">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+      <div className="flex flex-col justify-center items-center min-h-[80vh] w-full">
+        <Spinner message="Cargando tu información de perfil..." size="md" />
       </div>
     );
+  }
 
   if (error) return <p className="text-red-500 text-center py-10">{error}</p>;
 

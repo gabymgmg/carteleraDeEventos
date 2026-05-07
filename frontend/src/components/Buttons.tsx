@@ -1,15 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Spinner from './Spinner'; // Asegúrate de que la ruta sea correcta
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'success' | 'danger';
   isLoading?: boolean;
-  to?: string; // Si existe, se renderiza un Link
+  to?: string; 
 }
 
 const Button = ({
   variant = 'primary',
-  isLoading,
+  isLoading = false,
   children,
   className = '',
   to,
@@ -27,49 +28,28 @@ const Button = ({
 
   const combinedClasses = `${baseStyles} ${variants[variant]} ${className}`;
 
-  // Contenido interno del botón que muestra un spinner si está cargando
-  const content = (
-    <>
-      {isLoading && (
-        <svg
-          className="animate-spin -ml-1 mr-2 h-4 w-4 text-current"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          />
-        </svg>
-      )}
-      {isLoading ? 'Procesando...' : children}
-    </>
-  );
-
+  // Si es un Link, sin spinner
   if (to) {
     return (
       <Link to={to} className={combinedClasses}>
-        {content}
+        {children}
       </Link>
     );
   }
 
+  // Si es un botón normal, se usa Spinner manteniendo el texto original
   return (
     <button
       className={combinedClasses}
       disabled={isLoading || props.disabled}
       {...props}
     >
-      {content}
+      {isLoading && (
+        <div className="mr-2">
+          <Spinner size="sm" />
+        </div>
+      )}
+      {children}
     </button>
   );
 };

@@ -5,7 +5,7 @@ import Spinner from './Spinner'; // Asegúrate de que la ruta sea correcta
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'success' | 'danger';
   isLoading?: boolean;
-  to?: string; 
+  to?: string;
 }
 
 const Button = ({

@@ -9,7 +9,10 @@ const Spinner = ({ message, size = 'md' }: SpinnerProps) => {
   const iconSize = isSmall ? '40' : '64';
 
   return (
-    <div className="flex flex-col items-center justify-center gap-3" data-testid="loading-spinner">
+    <div
+      className="flex flex-col items-center justify-center gap-3"
+      data-testid="loading-spinner"
+    >
       <svg
         className="animate-spin"
         width={iconSize}

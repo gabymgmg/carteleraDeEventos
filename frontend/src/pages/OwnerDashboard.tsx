@@ -39,12 +39,12 @@ const OwnerDashboard = () => {
   };
 
   if (loading) {
-  return (
-    <div className="flex flex-col justify-center items-center min-h-[80vh] w-full">
-      <Spinner message="Cargando tu panel de control..." size="md" />
-    </div>
-  );
-}
+    return (
+      <div className="flex flex-col justify-center items-center min-h-[80vh] w-full">
+        <Spinner message="Cargando tu panel de control..." size="md" />
+      </div>
+    );
+  }
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (

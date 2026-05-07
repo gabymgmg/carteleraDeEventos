@@ -66,7 +66,7 @@ const EditUser = () => {
     }
   };
 
-  if (loading)     {
+  if (loading) {
     return (
       <div className="flex flex-col justify-center items-center min-h-[80vh] w-full">
         <Spinner message="Cargando tu información de perfil..." size="md" />

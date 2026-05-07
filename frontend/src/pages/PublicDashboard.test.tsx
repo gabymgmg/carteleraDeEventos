@@ -85,8 +85,7 @@ describe('PublicDashboard Page', () => {
       </MemoryRouter>
     );
 
-    const spinner = screen
-      .getByTestId('loading-spinner');
+    const spinner = screen.getByTestId('loading-spinner');
     expect(spinner).toBeInTheDocument();
   });
 

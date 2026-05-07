@@ -3,7 +3,6 @@ import api from '../api/axios';
 import type { User } from '../types/user';
 import Button from '../components/Buttons';
 import Spinner from '../components/Spinner';
-import { Link } from 'react-router-dom';
 
 const UserProfile = () => {
   const [loading, setLoading] = useState(true);

@@ -107,10 +107,11 @@ describe('Login Page', () => {
       target: { value: 'passsword123' },
     });
     fireEvent.click(screen.getByRole('button', { name: /Ingresar/i }));
-    // Button should be disabled
-    const loadingButton = screen.getByRole('button', { name: /Procesando/i });
+    // Button should be disabled and show loading spinner
+    const loadingButton = screen.getByRole('button', { name: /Ingresar/i });
     expect(loadingButton).toBeDisabled();
-    expect(loadingButton.querySelector('svg')).toHaveClass('animate-spin');
+    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+
     resolveApi({ data: {} });
   });
 });

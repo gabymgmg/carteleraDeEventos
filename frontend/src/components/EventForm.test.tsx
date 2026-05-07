@@ -101,7 +101,8 @@ describe('EventForm Component', () => {
       </MemoryRouter>
     );
 
-    const submitButton = screen.getByRole('button', { name: /procesando/i });
+    const submitButton = screen.getByRole('button', { name: /Crear Evento/i });
+    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
     expect(submitButton).toBeDisabled();
   });
 

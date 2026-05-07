@@ -1,4 +1,3 @@
-// src/components/common/Spinner.tsx
 interface SpinnerProps {
   message?: string;
   size?: 'sm' | 'md';
@@ -6,35 +5,29 @@ interface SpinnerProps {
 
 const Spinner = ({ message, size = 'md' }: SpinnerProps) => {
   const isSmall = size === 'sm';
-  const iconSize = isSmall ? '40' : '64';
+
+  // h-5 = 20px (botones)
+  // h-16 = 64px (pantallas de carga)
+  const sizeClass = isSmall ? 'h-5 w-5' : 'h-16 w-16';
 
   return (
     <div
-      className="flex flex-col items-center justify-center gap-3"
+      className={`flex flex-col items-center justify-center ${isSmall ? 'gap-0' : 'gap-3'}`}
       data-testid="loading-spinner"
     >
       <svg
-        className="animate-spin"
-        width={iconSize}
-        height={iconSize}
-        viewBox={`0 0 ${iconSize} ${iconSize}`}
+        className={`animate-spin ${sizeClass}`}
+        viewBox="0 0 64 64"
         fill="none"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <circle
-          cx={Number(iconSize) / 2}
-          cy={Number(iconSize) / 2}
-          r={isSmall ? '15' : '24'}
-          stroke="#E5E7EB"
-          strokeWidth={isSmall ? '2' : '6'}
-        />
+        {/* Círculo de fondo (gris claro) */}
+        <circle cx="32" cy="32" r="24" stroke="#E5E7EB" strokeWidth="6" />
+        {/* El arco con gradiente */}
         <path
-          d={
-            isSmall
-              ? 'M13.6 6.3C17.2 4.6 21.4 4.4 25.1 5.8'
-              : 'M21.8 10.1C24.7 8.7 27.8 8 30.9 7.8'
-          }
+          d="M21.8 10.1C24.7 8.7 27.8 8 30.9 7.8"
           stroke="url(#spinner_gradient)"
-          strokeWidth={isSmall ? '2' : '6'}
+          strokeWidth="6"
           strokeLinecap="round"
         />
         <defs>
@@ -44,7 +37,9 @@ const Spinner = ({ message, size = 'md' }: SpinnerProps) => {
           </linearGradient>
         </defs>
       </svg>
-      {message && (
+
+      {/* Solo muestra mensaje si NO es para un botón */}
+      {!isSmall && message && (
         <span className="text-gray-500 text-sm animate-pulse">{message}</span>
       )}
     </div>

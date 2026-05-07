@@ -50,9 +50,9 @@ const OwnerDashboard = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Header del Dashboard */}
-      <div className="md:flex md:items-center md:justify-between mb-8 space-y-4 md:space-y-0">
-        <div>
-          <h2 className="text-3xl font-extrabold text-gray-900">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+        <div className="flex-1 min-w-0">
+          <h2 className="text-3xl font-extrabold text-gray-900 truncate">
             Bienvenido, {user?.name}
           </h2>
           <p className="text-gray-500 mt-1">
@@ -68,9 +68,16 @@ const OwnerDashboard = () => {
           </div>
         </div>
 
-        <Button to="/create-event" variant="primary" className="shadow-md">
-          + Crear Nuevo Evento
-        </Button>
+        {/* Asegura que el botón mantenga su ancho y no se deforme */}
+        <div className="flex-shrink-0">
+          <Button
+            to="/create-event"
+            variant="primary"
+            className="shadow-md whitespace-nowrap"
+          >
+            + Crear Nuevo Evento
+          </Button>
+        </div>
       </div>
 
       {/* Tarjetas de Estadísticas */}

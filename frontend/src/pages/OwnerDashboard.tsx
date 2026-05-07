@@ -4,6 +4,7 @@ import api from '../api/axios';
 import type { Event } from '../types/event';
 import EventCard from '../components/EventCard';
 import Button from '../components/Buttons';
+import Spinner from '../components/Spinner';
 
 const OwnerDashboard = () => {
   const { user } = useAuth();
@@ -37,7 +38,13 @@ const OwnerDashboard = () => {
     }
   };
 
-  if (loading) return <p>Cargando eventos...</p>;
+  if (loading) {
+    return (
+      <div className="flex flex-col justify-center items-center min-h-[80vh] w-full">
+        <Spinner message="Cargando tu panel de control..." size="md" />
+      </div>
+    );
+  }
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
@@ -82,11 +89,7 @@ const OwnerDashboard = () => {
         Tus Publicaciones
       </h3>
 
-      {loading ? (
-        <div className="flex justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      ) : events.length === 0 ? (
+      {events.length === 0 ? (
         <div className="text-center py-20 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl">
           <p className="text-gray-500 mb-6 text-lg">
             Aún no has publicado ningún evento.
@@ -132,19 +135,28 @@ const OwnerDashboard = () => {
 };
 
 // Componente interno para las estadísticas
-const StatCard = ({ title, value, color, isText = false }: any) => (
-  <div
-    className={`bg-white p-4 shadow-sm rounded-xl border-l-4 border-${color}-500`}
-  >
-    <dt className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-      {title}
-    </dt>
-    <dd
-      className={`mt-1 ${isText ? 'text-lg font-bold text-green-600' : 'text-3xl font-extrabold text-gray-900'}`}
+const StatCard = ({ title, value, color, isText = false }: any) => {
+  // Mapeo manual de colores para que Tailwind los detecte
+  const borderColors: { [key: string]: string } = {
+    blue: 'border-blue-500',
+    green: 'border-green-500',
+    purple: 'border-purple-500',
+  };
+
+  return (
+    <div
+      className={`bg-white p-4 shadow-sm rounded-xl border-l-4 ${borderColors[color] || 'border-gray-500'}`}
     >
-      {value}
-    </dd>
-  </div>
-);
+      <dt className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+        {title}
+      </dt>
+      <dd
+        className={`mt-1 ${isText ? 'text-lg font-bold text-green-600' : 'text-3xl font-extrabold text-gray-900'}`}
+      >
+        {value}
+      </dd>
+    </div>
+  );
+};
 
 export default OwnerDashboard;

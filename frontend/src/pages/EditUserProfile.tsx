@@ -4,10 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import Input from '../components/Input';
 import Button from '../components/Buttons';
+import Spinner from '../components/Spinner';
 
 const EditUser = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const { updateUser } = useAuth();
 
@@ -49,6 +51,7 @@ const EditUser = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const { data } = await api.put('/users/profile', formData);
       // Update AuthContext with the fresh data from the DB
@@ -58,10 +61,19 @@ const EditUser = () => {
     } catch (error) {
       console.error('Error updating profile:', error);
       setError('No se pudo actualizar el perfil');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  if (loading) return <p>Cargando...</p>;
+  if (loading) {
+    return (
+      <div className="flex flex-col justify-center items-center min-h-[80vh] w-full">
+        <Spinner message="Cargando tu información de perfil..." size="md" />
+      </div>
+    );
+  }
+
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
@@ -108,7 +120,7 @@ const EditUser = () => {
           onChange={handleChange}
         />
         <div className="flex items-center gap-4 pt-2">
-          <Button type="submit" isLoading={loading}>
+          <Button type="submit" isLoading={isSubmitting}>
             Guardar Cambios
           </Button>
           <Button to="/profile" variant="secondary">

@@ -4,6 +4,7 @@ import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import type { Event } from '../types/event';
 import EventForm from '../components/EventForm';
+import Spinner from '../components/Spinner';
 
 interface EditEventProps {
   onEventUpdated?: () => void; // Callback para notificar al padre que se actualizó un evento
@@ -60,7 +61,13 @@ const EditEvent = ({ onEventUpdated }: EditEventProps) => {
     }
   };
 
-  if (loading) return <div>Cargando...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Spinner message="Cargando detalles del evento..." size="md" />
+      </div>
+    );
+  }
   if (!event && !loading)
     return <div className="text-center py-10">Evento no encontrado.</div>;
   return (

@@ -4,6 +4,7 @@ import api from '../api/axios';
 import type { Event } from '../types/event';
 import Button from '../components/Buttons';
 import { formatDateDisplay } from '../utils/dateFormatter';
+import Spinner from '../components/Spinner';
 
 const EventDetail = () => {
   const { id } = useParams();
@@ -25,12 +26,13 @@ const EventDetail = () => {
     fetchEvent();
   }, [id]);
 
-  if (loading)
+  if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        Cargando...
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Spinner message="Cargando detalles del evento..." size="md" />
       </div>
     );
+  }
   if (error)
     return (
       <div className="h-screen flex items-center justify-center text-red-500">

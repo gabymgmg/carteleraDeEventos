@@ -101,7 +101,8 @@ describe('EventForm Component', () => {
       </MemoryRouter>
     );
 
-    const submitButton = screen.getByRole('button', { name: /procesando/i });
+    const submitButton = screen.getByRole('button', { name: /Crear Evento/i });
+    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
     expect(submitButton).toBeDisabled();
   });
 
@@ -195,7 +196,7 @@ describe('EventForm Component', () => {
   it('pre-fills form fields when initialData is provided', () => {
     const mockEvent: Event = {
       title: 'Concierto de Rock',
-      date: '2027-12-31T20:00',
+      date: '2027-12-31T20:00:00.000Z', // UTC absoluto
       location: 'Auditorio Nacional',
       category: 'Concierto',
       imageUrl: 'http://example.com/image.png',

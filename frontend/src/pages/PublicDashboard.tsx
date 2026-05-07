@@ -3,13 +3,19 @@ import { useSearchParams } from 'react-router-dom';
 import EventCard from '../components/EventCard';
 import Input from '../components/Input';
 import Button from '../components/Buttons';
+import Spinner from '../components/Spinner';
 
 interface PublicDashboardProps {
   allEvents: Event[];
   loading: boolean;
+  error: string | null;
 }
 
-const PublicDashboard = ({ allEvents, loading }: PublicDashboardProps) => {
+const PublicDashboard = ({
+  allEvents,
+  loading,
+  error,
+}: PublicDashboardProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Obtenemos los valores actuales de la URL
@@ -43,14 +49,6 @@ const PublicDashboard = ({ allEvents, loading }: PublicDashboardProps) => {
     }
     setSearchParams(newParams);
   };
-
-  if (loading && allEvents.length === 0) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -115,16 +113,44 @@ const PublicDashboard = ({ allEvents, loading }: PublicDashboardProps) => {
       </div>
 
       {/* Renderizado de resultados filtrados */}
-      {filteredEvents.length === 0 ? (
+      {loading && allEvents.length === 0 ? (
+        // 1. if it's the first load and we don't have events yet, show the spinner
+        <Spinner message="Cargando eventos..." size="md" />
+      ) : error ? (
+        // 2. if we have an error, show the error message
+        <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+          <p className="text-gray-500 text-lg mb-4">{error}</p>
+          <Button
+            onClick={() => setSearchParams({})}
+            variant="secondary"
+            className="mx-auto"
+          >
+            Ver todos
+          </Button>
+        </div>
+      ) : allEvents.length === 0 ? (
+        // 3. if we have loaded but there are no events at all, show a different message
+        <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+          <p className="text-gray-500 text-lg mb-4">
+            No hay eventos disponibles en este momento.
+          </p>
+        </div>
+      ) : filteredEvents.length === 0 ? (
+        // 4. if we have loaded events but none match the filters, show the "no results" message
         <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
           <p className="text-gray-500 text-lg mb-4">
             No hay eventos que coincidan.
           </p>
-          <Button onClick={() => setSearchParams({})} variant="secondary">
+          <Button
+            onClick={() => setSearchParams({})}
+            variant="secondary"
+            className="mx-auto"
+          >
             Ver todos
           </Button>
         </div>
       ) : (
+        // 5. if we have events that match the filters, show them
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {filteredEvents.map((event) => (
             <EventCard

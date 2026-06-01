@@ -2,19 +2,19 @@ import React, { useState } from 'react';
 import api from '../api/axios';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../hooks/useAuth';
 import AuthLayout from '../components/AuthLayout';
 import Input from '../components/Input';
 import Button from '../components/Buttons';
+import { loginSuccess} from '../store/slices/authSlice';
+import { useDispatch } from 'react-redux';
+
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Obtenemos la función login del contexto global
-  const { login } = useAuth();
+  const dispatch = useDispatch()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +23,7 @@ const LoginPage = () => {
 
     try {
       const response = await api.post('/auth/login', { email, password });
-      login(response.data);
+      dispatch(loginSuccess(response.data));
     } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(

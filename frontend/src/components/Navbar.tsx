@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '../store';
+import { logout } from '../store/slices/authSlice';
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch()
   return (
     <nav className="bg-white shadow-md p-4 flex justify-between items-center">
       <Link to="/" className="text-xl font-bold text-blue-600">
@@ -20,7 +24,7 @@ const Navbar = () => {
               Panel de Control
             </Link>
             <button
-              onClick={logout}
+              onClick= {() => dispatch(logout())}
               className="text-sm font-medium text-red-600 hover:text-red-800"
             >
               Salir
